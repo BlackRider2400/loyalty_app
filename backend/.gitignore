@@ -1,0 +1,134 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar
+*.gz
+
+# Log files
+*.log
+logs/
+target/*.log
+
+# Maven temporary files
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar # Maven Wrapper JAR itself (often committed, but if you want to regenerate, ignore)
+.mvn/wrapper/maven-wrapper.properties # Maven Wrapper properties (often committed)
+
+# Gradle files (if you ever switch or have mixed projects)
+.gradle/
+build/
+*.gradle.properties
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse files
+.classpath
+.project
+.settings/
+bin/
+
+# VS Code files
+.vscode/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project-specific temp files
+tmp/
+temp/
+
+# Environment variables and sensitive configuration
+.env
+*.properties.local
+*.yml.local
+*.yaml.local
+application*.properties
+application*.yml
+!src/main/resources/application.properties # Keep the main application.properties
+!src/main/resources/application.yml       # Keep the main application.yml
+# If you have profile-specific application.properties/yml that should be committed,
+# make sure they are not caught by the general ignore.
+# Example: !src/main/resources/application-dev.properties
+
+# Test results
+TEST-*.xml
+target/surefire-reports/
+target/failsafe-reports/
+
+# Coverage reports
+*.exec
+*.ec
+jacoco/
+
+# Spring Boot devtools
+.spring-boot-devtools.properties
+
+# Docker files (if you have local build artifacts)
+!Dockerfile
+!docker-compose.yml
+target/*.jar # Re-ignoring any JARs inside target, just in case
+
+# Node.js (if frontend is in the same repo and you're not using a separate .gitignore)
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnp/
+.pnp.js

@@ -3,7 +3,6 @@ package com.rally.up.go.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
@@ -27,6 +26,9 @@ public class User {
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+
+    @Column(name = "enabled")
+    private boolean enabled;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))

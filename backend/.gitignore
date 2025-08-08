@@ -100,8 +100,6 @@ temp/
 *.properties.local
 *.yml.local
 *.yaml.local
-application*.properties
-application*.yml
 !src/main/resources/application.properties # Keep the main application.properties
 !src/main/resources/application.yml       # Keep the main application.yml
 # If you have profile-specific application.properties/yml that should be committed,

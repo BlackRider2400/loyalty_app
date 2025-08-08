@@ -4,6 +4,7 @@ import com.rally.up.go.exception.TokenRefreshException;
 import com.rally.up.go.model.*;
 import com.rally.up.go.repository.UserRepository;
 import com.rally.up.go.security.JwtUtil;
+import com.rally.up.go.service.AuthTokenService;
 import com.rally.up.go.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,9 @@ public class AuthController {
 
     @Autowired
     private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private AuthTokenService authTokenService;
 
     /**
      * Handles user login requests.
@@ -92,7 +96,7 @@ public class AuthController {
      * @return ResponseEntity indicating success or conflict if email/username already exists.
      */
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody LoginRequest registrationRequest) {
+    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registrationRequest) {
         // Check if email is already in use
         if (userRepository.findByEmail(registrationRequest.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is already in use!");
@@ -104,13 +108,14 @@ public class AuthController {
 
         // Create new user's account
         User user = new User();
-        user.setUsername(registrationRequest.getEmail()); // Using email as username for simplicity
+        user.setUsername(registrationRequest.getName()); // Using email as username for simplicity
         user.setEmail(registrationRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registrationRequest.getPassword())); // Encode password!
-        user.setEnabled(true);
+        user.setEnabled(false);
         user.setRoles(Set.of("USER")); // Assign default role
 
         userRepository.save(user);
+        authTokenService.createVerificationToken(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully!");
     }
@@ -172,5 +177,23 @@ public class AuthController {
             }
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No active session to logout.");
+    }
+
+    @GetMapping("/activate-account")
+    public ResponseEntity<String> activateAccount(@RequestParam String token) {
+        authTokenService.verifyAccount(token);
+        return ResponseEntity.ok("Account activated successfully!");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
+        authTokenService.createPasswordResetToken(email);
+        return ResponseEntity.ok("Password reset link sent to your email.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody String token, @RequestBody String newPassword){
+        authTokenService.resetPassword(token, newPassword);
+        return ResponseEntity.ok("Password reset successfully.");
     }
 }

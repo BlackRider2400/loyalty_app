@@ -36,11 +36,7 @@ public class RefreshTokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(user.getEmail());
-
-        if(existingToken.isPresent()) {
-            refreshTokenRepository.delete(existingToken.get());
-        }
+        refreshTokenRepository.deleteByUserEmail(user.getEmail());
 
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
@@ -62,7 +58,7 @@ public class RefreshTokenService {
     public int deleteByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        refreshTokenRepository.deleteByEmail(user.getEmail());
+        refreshTokenRepository.deleteByUserEmail(user.getEmail());
         return 1; // Indicate success
     }
 

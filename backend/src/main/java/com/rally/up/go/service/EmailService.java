@@ -19,6 +19,8 @@ public class EmailService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
+        message.setFrom("admin@mylovelyserver.fun");
+        mailSender.send(message);
         log.info("Email sent to " + to);
     }
 }

@@ -13,9 +13,6 @@ import java.time.Instant;
 @NoArgsConstructor
 public class VerificationToken {
 
-    @Value("${verification.expiration}")
-    private long expirationTime;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,13 +25,13 @@ public class VerificationToken {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
-    public VerificationToken(User user, String token) {
+    public VerificationToken(User user, String token, long expirationTime) {
         this.user = user;
-        this.expiryDate = calculateExpiryDate();
+        this.expiryDate = calculateExpiryDate(expirationTime);
         this.token = token;
     }
 
-    private Instant calculateExpiryDate() {
+    private Instant calculateExpiryDate(long expirationTime) {
         return Instant.now().plusMillis(expirationTime);
     }
 }

@@ -29,9 +29,12 @@ public class AuthTokenService {
     @Value("${app.baseUrl}")
     private String baseUrl;
 
+    @Value("${verification.expiration}")
+    private long expirationTime;
+
     public void createVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken(user, token);
+        VerificationToken verificationToken = new VerificationToken(user, token, expirationTime);
         verificationTokenRepository.save(verificationToken);
 
         String url = baseUrl + "/auth/activate-account?token=" + token;
@@ -58,7 +61,7 @@ public class AuthTokenService {
         verificationTokenRepository.deleteByUser_Id(user.getId());
 
         String token = UUID.randomUUID().toString();
-        VerificationToken passwordResetToken = new VerificationToken(user, token);
+        VerificationToken passwordResetToken = new VerificationToken(user, token, expirationTime);
         verificationTokenRepository.save(passwordResetToken);
 
         String url = baseUrl + "/auth/reset-password?token=" + token;

@@ -1,3 +1,4 @@
+import { SignInForm } from "@/components/SignInForm";
 import Image from "next/image";
 import React from "react";
 
@@ -12,6 +13,13 @@ const SignIn = () => {
                     height={250}
                     className="my-8"
                 />
+            </section>
+
+            <section className="p-4 w-full flex flex-col mt-20">
+                <h1 className="mb-4 text-white text-[20px] font-bold">
+                    Sign In
+                </h1>
+                <SignInForm />
             </section>
         </div>
     );

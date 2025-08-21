@@ -1,6 +1,8 @@
 import Footer from "@/components/Footer";
 import ImageCard from "@/components/ImageCard";
+import { ROUTES } from "@/constants/routes";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const UserPage = () => {
@@ -15,13 +17,15 @@ const UserPage = () => {
                         height={250}
                         className="my-8"
                     />
-                    <Image
-                        src="/icons/settings.svg"
-                        alt="settings"
-                        width={24}
-                        height={24}
-                        className="absolute right-0"
-                    />
+                    <Link href={ROUTES.USER_SETTINGS}>
+                        <Image
+                            src="/icons/settings.svg"
+                            alt="settings"
+                            width={24}
+                            height={24}
+                            className="absolute right-0"
+                        />
+                    </Link>
                 </div>
 
                 <div className="border-t-[1px] border-t-white">

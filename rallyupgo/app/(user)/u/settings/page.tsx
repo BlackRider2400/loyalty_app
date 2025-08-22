@@ -4,6 +4,26 @@ import Link from "next/link";
 
 import React from "react";
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
+
 const Tile = ({
     imgUrl,
     alt,
@@ -74,22 +94,80 @@ const Settings = () => {
                     />
                 </Link>
 
-                <Tile
-                    alt="qrcode"
-                    imgUrl="/icons/qrcodeWhite.svg"
-                    text="Get RallyCoins"
-                />
-                <Tile
-                    alt="contact"
-                    imgUrl="/icons/contact.svg"
-                    text="Contact Us"
-                />
-                <Tile
-                    alt="scale"
-                    imgUrl="/icons/scale.svg"
-                    text="Privacy Policy"
-                />
-                <Tile alt="logout" imgUrl="/icons/logout.svg" text="Logout" />
+                <Sheet>
+                    <SheetTrigger className="w-full">
+                        <Tile
+                            alt="qrcode"
+                            imgUrl="/icons/qrcodeWhite.svg"
+                            text="Get RallyCoins"
+                        />
+                    </SheetTrigger>
+                    <SheetContent className="w-full bg-primary-blue">
+                        <SheetHeader>
+                            <SheetTitle>Are you absolutely sure?</SheetTitle>
+                            <SheetDescription>
+                                This action cannot be undone. This will
+                                permanently delete your account and remove your
+                                data from our servers.
+                            </SheetDescription>
+                        </SheetHeader>
+                    </SheetContent>
+                </Sheet>
+
+                <Sheet>
+                    <SheetTrigger className="w-full">
+                        <Tile
+                            alt="contact"
+                            imgUrl="/icons/contact.svg"
+                            text="Contact Us"
+                        />
+                    </SheetTrigger>
+                    <SheetContent className="w-full bg-primary-blue">
+                        <SheetHeader>
+                            <SheetTitle className="text-white">
+                                Contact Us
+                            </SheetTitle>
+                            <SheetDescription className="text-white">
+                                Email: twojaStara69@gmail.com
+                                <br />
+                                Phone: 123-456-7890
+                            </SheetDescription>
+                        </SheetHeader>
+                    </SheetContent>
+                </Sheet>
+
+                <Link href="/u/settings/terms">
+                    <Tile
+                        alt="scale"
+                        imgUrl="/icons/scale.svg"
+                        text="Privacy Information"
+                    />
+                </Link>
+
+                <AlertDialog>
+                    <AlertDialogTrigger className="w-full">
+                        <Tile
+                            alt="logout"
+                            imgUrl="/icons/logout.svg"
+                            text="Logout"
+                        />
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Are you sure you want to logout?
+                            </AlertDialogTitle>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="flex-center gap-2 flex-row">
+                            <AlertDialogCancel className="flex-1">
+                                Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction className="flex-1 bg-primary-blue hover:bg-primary-orange">
+                                Continue
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </section>
 
             <Footer />

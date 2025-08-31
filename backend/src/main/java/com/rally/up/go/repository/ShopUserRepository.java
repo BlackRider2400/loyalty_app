@@ -1,14 +1,13 @@
 package com.rally.up.go.repository;
 
 import com.rally.up.go.model.ShopUser;
-import com.rally.up.go.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
-    Optional<User> findByEmail(String email);
+public interface ShopUserRepository extends JpaRepository<ShopUser, Long> {
+    Optional<ShopUser> findByUsername(String username);
+    Optional<ShopUser> findByEmail(String email);
 }

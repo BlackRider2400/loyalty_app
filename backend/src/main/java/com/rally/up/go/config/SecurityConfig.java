@@ -54,8 +54,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Allow public access to the authentication and Swagger endpoints
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         // All other requests require authentication
+                        .requestMatchers("/api/client/**").hasRole("CLIENT")
+                        .requestMatchers("/api/shop/**").hasRole("SHOP")
                         .anyRequest().authenticated()
                 )
                 // Set session management to stateless, as we are using JWT tokens

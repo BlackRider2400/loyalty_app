@@ -3,36 +3,34 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
 
-const FooterElement = ({
+const Item = ({
+    href,
+    label,
     icon,
     activeIcon,
-    label,
-    href,
 }: {
+    href: string;
+    label: string;
     icon: string;
     activeIcon: string;
-    label: string;
-    href: string;
 }) => {
     const pathname = usePathname();
-    const isActive = pathname === href;
-
+    const active = pathname === href;
     return (
         <Link
             href={href}
-            className="flex-center h-full flex-col flex-1 gap-1 bg-white rounded-none"
+            className="flex-center h-full flex-1 flex-col gap-1 bg-white rounded-none"
         >
-            {isActive ? (
-                <Image src={activeIcon} height={24} width={24} alt={label} />
-            ) : (
-                <Image src={`${icon}`} height={24} width={24} alt={label} />
-            )}
-
+            <Image
+                src={active ? activeIcon : icon}
+                width={24}
+                height={24}
+                alt={label}
+            />
             <span
                 className={`text-[14px] font-bold ${
-                    isActive ? "text-[#ff4d2f]" : "text-black"
+                    active ? "text-[#ff4d2f]" : "text-black"
                 }`}
             >
                 {label}
@@ -41,29 +39,29 @@ const FooterElement = ({
     );
 };
 
-const Footer = () => {
+const ClubFooter = () => {
     return (
         <section className="bg-white w-full h-[100px] flex-center">
-            <FooterElement
+            <Item
+                href="/c"
+                label="Home"
                 icon="/icons/home.svg"
                 activeIcon="/icons/home-active.svg"
-                label="Home"
-                href="/u"
             />
-            <FooterElement
+            <Item
+                href="/c/scanner"
+                label="Scanner"
                 icon="/icons/qrcode.svg"
                 activeIcon="/icons/qrcode-active.svg"
-                label="QR Code"
-                href="/u/qrcode"
             />
-            <FooterElement
+            <Item
+                href="/c/coupons"
+                label="Coupons"
                 icon="/icons/coupon.svg"
                 activeIcon="/icons/coupon-active.svg"
-                label="Coupons"
-                href="/u/coupons"
             />
         </section>
     );
 };
 
-export default Footer;
+export default ClubFooter;

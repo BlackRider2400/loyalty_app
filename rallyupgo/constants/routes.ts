@@ -5,5 +5,8 @@ export const ROUTES = {
     USER_SETTINGS: "/u/settings",
 
     CLUB_HOME: "/c",
-    CLUB_QR_CODE: "/c/qrcode",
+    CLUB_SCANNER: "/c/scanner",
+    CLUB_COUPONS: "/c/coupons",
+    CLUB_SETTINGS: "/c/settings",
+    CLUB_TERMS: "/c/settings/terms",
 };

@@ -1,6 +1,18 @@
 import Footer from "@/components/Footer";
 import ImageCard from "@/components/ImageCard";
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { ROUTES } from "@/constants/routes";
+
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -47,16 +59,37 @@ const UserPage = () => {
                             className="ml-2 rotate-180"
                         />
                     </div>
-                    <button className="bg-light-blue btn-text rounded-[14px] py-1 px-4 flex-center my-5">
-                        How to get RallyCoins
-                        <Image
-                            src="/icons/vector.svg"
-                            alt="vector"
-                            width={24}
-                            height={24}
-                            className="ml-2"
-                        />
-                    </button>
+
+                    <AlertDialog>
+                        <AlertDialogTrigger className="w-full">
+                            <span className="bg-light-blue btn-text rounded-[14px] py-1 px-4 flex-center my-5 w-fit">
+                                How to get RallyCoins
+                                <Image
+                                    src="/icons/vector.svg"
+                                    alt="vector"
+                                    width={24}
+                                    height={24}
+                                    className="ml-2"
+                                />
+                            </span>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    How to get RallyCoins?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    RallyCoins can be earned by making purchases
+                                    at the reception and renting squash courts.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className="flex-center gap-2 flex-row">
+                                <AlertDialogCancel className="flex-1">
+                                    Cancel
+                                </AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </section>
 

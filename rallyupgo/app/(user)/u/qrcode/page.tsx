@@ -5,6 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 const page = () => {
     return (
         <div className="min-h-screen flex flex-col">
@@ -22,12 +33,41 @@ const page = () => {
                     Generated QR code
                 </h1>
 
-                <Image
-                    src="/icons/infoIcon.svg"
-                    alt="info"
-                    width={24}
-                    height={24}
-                />
+                <div>
+                    <AlertDialog>
+                        <AlertDialogTrigger className="w-full">
+                            <Image
+                                src="/icons/infoIcon.svg"
+                                alt="info"
+                                width={24}
+                                height={24}
+                            />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    Your QR code
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    RallyCoins are rewarded when your QR code is
+                                    scanned. Simply generate your personal QR
+                                    code and let others scan it to earn points
+                                    directly on your account.
+                                    <br />
+                                    <br />
+                                    You can also collect RallyCoins by making
+                                    purchases at the reception and renting
+                                    squash courts.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className="flex-center gap-2 flex-row">
+                                <AlertDialogCancel className="flex-1">
+                                    Got it
+                                </AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
             </section>
             <section className="flex-1 bg-primary-blue flex-center">
                 <div className="relative">

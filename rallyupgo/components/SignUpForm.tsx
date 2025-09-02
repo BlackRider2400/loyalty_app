@@ -3,11 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-
 import { z } from "zod";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,44 +16,78 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-
-import { Calendar } from "@/components/ui/calendar";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
 const FormSchema = z.object({
     username: z.string().min(1, { message: "Username is required." }),
-    password: z.string(),
     email: z.email({ message: "Invalid email address." }),
-    dob: z.date(),
+    password: z
+        .string()
+        .min(6, { message: "Password must be at least 6 characters." }),
 });
 
+type FormValues = z.infer<typeof FormSchema>;
+
 export function SignUpForm() {
-    const form = useForm<z.infer<typeof FormSchema>>({
+    const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const form = useForm<FormValues>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            password: "",
-            email: "",
             username: "",
+            email: "",
+            password: "",
         },
     });
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        toast("You submitted the following values", {
-            description: (
-                <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-                    <code className="text-white">
-                        {JSON.stringify(data, null, 2)}
-                    </code>
-                </pre>
-            ),
-        });
+    async function onSubmit(values: FormValues) {
+        setIsSubmitting(true);
+        try {
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+            });
+
+            const contentType = res.headers.get("content-type") || "";
+            const payload = contentType.includes("application/json")
+                ? await res.json()
+                : await res.text();
+
+            if (res.status === 201) {
+                toast.success(
+                    typeof payload === "string"
+                        ? payload
+                        : payload?.message || "User registered successfully."
+                );
+
+                router.push("/acc-activation");
+
+                return;
+            }
+
+            if (res.status === 409) {
+                const msg =
+                    typeof payload === "string"
+                        ? payload
+                        : payload?.error || "Email already in use.";
+                form.setError("email", { message: msg });
+                toast.error(msg);
+                return;
+            }
+
+            const genericMsg =
+                typeof payload === "string"
+                    ? payload
+                    : payload?.error || "Registration failed.";
+            toast.error(genericMsg);
+        } catch {
+            toast.error("Network error during registration.");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -71,7 +103,7 @@ export function SignUpForm() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="text-white">
-                                    Username
+                                    Username{" "}
                                     <span className="text-[#FF383C]">*</span>
                                 </FormLabel>
                                 <FormControl>
@@ -81,18 +113,18 @@ export function SignUpForm() {
                                         {...field}
                                     />
                                 </FormControl>
-
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+
                     <FormField
                         control={form.control}
                         name="email"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="text-white">
-                                    Email
+                                    Email{" "}
                                     <span className="text-[#FF383C]">*</span>
                                 </FormLabel>
                                 <FormControl>
@@ -102,7 +134,6 @@ export function SignUpForm() {
                                         {...field}
                                     />
                                 </FormControl>
-
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -114,70 +145,17 @@ export function SignUpForm() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="text-white">
-                                    Password
+                                    Password{" "}
                                     <span className="text-[#FF383C]">*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="••••••"
                                         type="password"
+                                        placeholder="••••••"
                                         className="w-full rounded-[16px] h-14 !bg-white text-black placeholder:text-neutral-500 border-0 outline-none ring-0 focus:border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none"
                                         {...field}
                                     />
                                 </FormControl>
-
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="dob"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel className="text-white">
-                                    Date of birth
-                                </FormLabel>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <div className="relative w-full">
-                                                <Input
-                                                    readOnly
-                                                    value={
-                                                        field.value
-                                                            ? format(
-                                                                  field.value,
-                                                                  "dd/MM/yyyy"
-                                                              )
-                                                            : ""
-                                                    }
-                                                    placeholder="DD/MM/YYYY"
-                                                    className="w-full rounded-[16px] h-14 !bg-white text-black placeholder:text-neutral-500 border-0 outline-none ring-0 focus:border-0 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none pr-10"
-                                                />
-                                                <CalendarIcon className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 opacity-50" />
-                                            </div>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                        className="w-auto p-0"
-                                        align="start"
-                                    >
-                                        <Calendar
-                                            mode="single"
-                                            selected={field.value}
-                                            onSelect={field.onChange}
-                                            disabled={(date) =>
-                                                date > new Date() ||
-                                                date < new Date("1900-01-01")
-                                            }
-                                            captionLayout="dropdown"
-                                            initialFocus
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -185,9 +163,11 @@ export function SignUpForm() {
 
                     <Button
                         type="submit"
-                        className="w-full mt-2 rounded-[16px] bg-light-blue text-[16px] font-bold py-6 hover:bg-primary-orange"
+                        disabled={isSubmitting}
+                        aria-busy={isSubmitting}
+                        className="w-full mt-2 rounded-[16px] bg-light-blue text-[16px] font-bold py-6 hover:bg-primary-orange disabled:opacity-60"
                     >
-                        Sign Up
+                        {isSubmitting ? "Signing up..." : "Sign Up"}
                     </Button>
                 </form>
             </Form>

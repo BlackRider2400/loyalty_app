@@ -9,7 +9,7 @@ import {
 } from "@zxing/library";
 
 export default function QrGenerator({
-    text = "https://www.youtube.com/watch?v=qaIR5O9s8k0&ab_channel=przemekbestgames",
+    text = "youtube.com/watch?v=UBtCejQ62fk",
     size = 330,
 }: {
     text?: string;

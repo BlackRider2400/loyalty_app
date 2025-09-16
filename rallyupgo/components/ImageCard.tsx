@@ -1,27 +1,27 @@
 import Image from "next/image";
 import React from "react";
 
-const ImageCard = ({
-    isLarge = false,
-    imgUrl,
-    alt,
-    text,
-}: {
-    isLarge?: boolean;
+type ImageCardProps = {
     imgUrl: string;
     alt: string;
     text: string;
-}) => {
+    ending?: boolean;
+};
+
+const ImageCard = ({ imgUrl, alt, text }: ImageCardProps) => {
     return (
-        <div className="relative shrink-0 ml-4">
+        <div className="relative ml-4 shrink-0 rounded-[16px] overflow-hidden">
             <Image
                 src={imgUrl}
-                alt={alt}
-                width={140}
-                height={isLarge ? 208 : 126}
-                className="rounded-[16px]"
+                alt={alt ?? text}
+                width={130}
+                height={75}
+                className="block"
             />
-            <p className="absolute bottom-2 left-2 w-fit text-white max-w-[120px] font-extrabold text-[20px]">
+
+            <span aria-hidden="true" className="absolute inset-0 bg-black/40" />
+
+            <p className="absolute inset-0 flex items-center justify-center text-white font-extrabold text-[14px] max-w-[120px] mx-auto text-center z-10 px-2">
                 {text}
             </p>
         </div>

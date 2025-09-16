@@ -56,5 +56,5 @@ export default function QrGenerator({
         }
     }, [text, size]);
 
-    return <canvas ref={canvasRef} className="rounded shadow" />;
+    return <canvas ref={canvasRef} className="rounded" />;
 }

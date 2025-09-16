@@ -43,7 +43,7 @@ const FooterElement = ({
 
 const Footer = () => {
     return (
-        <section className="bg-white w-full h-[100px] flex-center">
+        <section className="bg-white w-full h-[100px] flex-center fixed bottom-0 left-0 right-0">
             <FooterElement
                 icon="/icons/home.svg"
                 activeIcon="/icons/home-active.svg"

@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
                 Accept: "*/*",
             },
             body: JSON.stringify({
-                name: username, // mapowanie: username -> name
+                name: username,
                 email,
                 password,
             }),

@@ -16,7 +16,7 @@ const Stat = ({ label, value }: { label: string; value: string }) => (
     </div>
 );
 
-export default function ClubHome() {
+const ClubHome = () => {
     return (
         <div className="min-h-screen flex flex-col">
             <section className="bg-primary-blue w-full flex flex-col px-4">
@@ -102,4 +102,6 @@ export default function ClubHome() {
             <ClubFooter />
         </div>
     );
-}
+};
+
+export default ClubHome;

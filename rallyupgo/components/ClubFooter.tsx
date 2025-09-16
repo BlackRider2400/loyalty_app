@@ -55,6 +55,12 @@ const ClubFooter = () => {
                 activeIcon="/icons/qrcode-active.svg"
             />
             <Item
+                href="/c/metrics"
+                label="Metrics"
+                icon="/icons/chart.svg"
+                activeIcon="/icons/chart-active.svg"
+            />
+            <Item
                 href="/c/coupons"
                 label="Coupons"
                 icon="/icons/coupon.svg"

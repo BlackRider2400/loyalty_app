@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-// Types reflecting Swagger schema
 interface LoginPayload {
     email: string;
     password: string;
@@ -15,7 +14,6 @@ interface LoginResponse {
 }
 
 export async function POST(req: Request) {
-    // Validate Content-Type
     const contentType = req.headers.get("content-type") || "";
     if (!contentType.includes("application/json")) {
         return NextResponse.json(
@@ -52,7 +50,6 @@ export async function POST(req: Request) {
 
     const url = `${base}/auth/login`;
 
-    // Add a simple 10s timeout so the request doesn’t hang forever
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10_000);
 
@@ -61,7 +58,6 @@ export async function POST(req: Request) {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                // Swagger says media type */* via Accept is fine
                 accept: "*/*",
             },
             body: JSON.stringify({ email, password }),
@@ -71,7 +67,6 @@ export async function POST(req: Request) {
 
         clearTimeout(timeout);
 
-        // Handle unauthorized
         if (upstream.status === 401) {
             return NextResponse.json(
                 { error: "Unauthorized - Invalid credentials" },
@@ -79,7 +74,6 @@ export async function POST(req: Request) {
             );
         }
 
-        // Propagate other non-2xx errors as-is, with best-effort message
         if (!upstream.ok) {
             const text = await upstream.text().catch(() => "");
             return NextResponse.json(
@@ -92,10 +86,8 @@ export async function POST(req: Request) {
             );
         }
 
-        // Parse success
         const data = (await upstream.json()) as LoginResponse;
 
-        // Defensive checks
         if (!data?.token || !data?.refreshToken) {
             return NextResponse.json(
                 { error: "Upstream did not return expected tokens." },
@@ -103,7 +95,6 @@ export async function POST(req: Request) {
             );
         }
 
-        // Prepare response payload (omit raw tokens from JSON for safety)
         const res = NextResponse.json(
             {
                 email: data.email,
@@ -114,7 +105,6 @@ export async function POST(req: Request) {
             { status: 200 }
         );
 
-        // Set secure, HttpOnly cookies for tokens
         const isProd = process.env.NODE_ENV === "production";
 
         res.cookies.set("access_token", data.token, {
@@ -122,7 +112,6 @@ export async function POST(req: Request) {
             secure: isProd,
             sameSite: "lax",
             path: "/",
-            // Default 1h if no expiry is provided by backend; adjust to your needs
             maxAge: 60 * 60,
         });
 
@@ -131,7 +120,6 @@ export async function POST(req: Request) {
             secure: isProd,
             sameSite: "lax",
             path: "/",
-            // Default 7 days
             maxAge: 60 * 60 * 24 * 7,
         });
 

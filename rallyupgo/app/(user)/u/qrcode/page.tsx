@@ -94,7 +94,9 @@ const page = () => {
                 </div>
             </section>
 
-            <Footer />
+            <div className="w-full h-[100px] bg-primary-blue">
+                <Footer />
+            </div>
         </div>
     );
 };

@@ -19,7 +19,7 @@ public class ShopUser extends User {
 
     private String shopName;
 
-    @OneToMany(mappedBy = "shopUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
     public ShopUser(String username, String password, String email, boolean enabled, String shopName) {

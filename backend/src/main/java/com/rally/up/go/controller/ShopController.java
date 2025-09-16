@@ -1,17 +1,21 @@
 package com.rally.up.go.controller;
 
+import com.rally.up.go.dto.ShopUserDTO;
 import com.rally.up.go.exception.UuidNotFoundException;
+import com.rally.up.go.mapper.ShopUserMapper;
 import com.rally.up.go.model.Coupon;
 import com.rally.up.go.model.QrCode;
-import com.rally.up.go.model.QrCodeCreditsDTO;
+import com.rally.up.go.dto.QrCodeCreditsDTO;
+import com.rally.up.go.model.ShopUser;
 import com.rally.up.go.repository.CouponRepository;
 import com.rally.up.go.repository.QrCodeRepository;
+import com.rally.up.go.repository.ShopUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +32,25 @@ public class ShopController {
     @Autowired
     private CouponRepository couponRepository;
 
-    @PostMapping("/shop/addCredits")
+    @Autowired
+    private ShopUserRepository shopUserRepository;
+
+    @Autowired
+    private ShopUserMapper shopUserMapper;
+
+    @GetMapping("/me")
+    public ResponseEntity<ShopUserDTO> me(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null) {
+            ShopUser shopUser = shopUserRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
+            return ResponseEntity.ok(shopUserMapper.toDto(shopUser));
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+
+    @PostMapping("/addCredits")
     public ResponseEntity<String> addCreditsToUser(@RequestBody QrCodeCreditsDTO qrCodeCreditsDTO) {
 
         if(qrCodeCreditsDTO.credits() < 0){
@@ -44,7 +66,7 @@ public class ShopController {
         return ResponseEntity.ok("Added " + qrCodeCreditsDTO.credits() + " credits to your account.");
     }
 
-    @PostMapping("/shop/useCoupon")
+    @PostMapping("/useCoupon")
     public ResponseEntity<Boolean> useCoupon(@RequestBody String uuid) {
         Coupon coupon = couponRepository.findByCode(uuid).orElseThrow(() -> new UuidNotFoundException(uuid));
 
@@ -58,12 +80,14 @@ public class ShopController {
         return ResponseEntity.ok().body(true);
     }
 
-    @PostMapping("/shop/checkCoupon")
+    @PostMapping("/checkCoupon")
     public ResponseEntity<Coupon> checkCoupon(@RequestBody String uuid) {
         Coupon coupon = couponRepository.findByCode(uuid).orElseThrow(() -> new UuidNotFoundException(uuid));
 
         return ResponseEntity.ok().body(coupon);
     }
+
+
 
 
 }

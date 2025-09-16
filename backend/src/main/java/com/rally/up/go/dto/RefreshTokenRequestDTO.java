@@ -1,4 +1,4 @@
-package com.rally.up.go.model;
+package com.rally.up.go.dto;
 
 public record RefreshTokenRequestDTO(String refreshToken) {
 

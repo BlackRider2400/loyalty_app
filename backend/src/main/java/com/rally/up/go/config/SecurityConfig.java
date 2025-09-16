@@ -57,8 +57,8 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         // All other requests require authentication
-                        .requestMatchers("/api/client/**").hasRole("CLIENT")
-                        .requestMatchers("/api/shop/**").hasRole("SHOP")
+                        .requestMatchers("/api/client/**").hasAuthority("CLIENT")
+                        .requestMatchers("/api/shop/**").hasAuthority("SHOP")
                         .anyRequest().authenticated()
                 )
                 // Set session management to stateless, as we are using JWT tokens

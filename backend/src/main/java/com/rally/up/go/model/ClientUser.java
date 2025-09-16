@@ -16,18 +16,22 @@ import java.util.List;
 @DiscriminatorValue("Client")
 public class ClientUser extends User {
 
-    private double balance;
+    private int balance;
 
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clientUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Coupon> couponList;
 
     public ClientUser() {
         couponList = new ArrayList<>();
     }
 
-    public void addBalance(double amount) {
+    public void addBalance(int amount) {
         this.balance += amount;
+    }
+
+    public void removeBalance(int amount) {
+        this.balance -= amount;
     }
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

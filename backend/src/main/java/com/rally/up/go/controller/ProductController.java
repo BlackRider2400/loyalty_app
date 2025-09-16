@@ -2,12 +2,17 @@ package com.rally.up.go.controller;
 
 import com.rally.up.go.mapper.ProductMapper;
 import com.rally.up.go.model.Product;
-import com.rally.up.go.model.ProductResponseDTO;
+import com.rally.up.go.dto.ProductResponseDTO;
+import com.rally.up.go.model.ShopUser;
 import com.rally.up.go.repository.ProductRepository;
+import com.rally.up.go.repository.ShopUserRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,11 +24,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/shop/products")
-@PreAuthorize("hasRole('SHOP')")
+@Log4j2
 public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ShopUserRepository shopUserRepository;
 
     @Autowired
     private ProductMapper productMapper;
@@ -33,7 +41,7 @@ public class ProductController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<ProductResponseDTO> addProduct(
+    public ResponseEntity<ProductResponseDTO> addProduct(@AuthenticationPrincipal UserDetails userDetails,
             @RequestPart("product") ProductResponseDTO dto,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
@@ -46,7 +54,12 @@ public class ProductController {
             imageUrl = "/uploads/" + fileName;
         }
 
-        Product product = new Product(null, dto.name(), dto.description(), dto.price(), imageUrl);
+        log.info("Uploading new file to " + imageUrl);
+
+        ShopUser shopUser = shopUserRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(userDetails.getUsername()));
+
+        Product product = new Product(null, dto.name(), dto.description(), dto.price(), imageUrl, shopUser);
         productRepository.save(product);
 
         return ResponseEntity.ok(productMapper.toDto(product));

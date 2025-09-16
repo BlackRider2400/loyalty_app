@@ -1,5 +1,9 @@
 package com.rally.up.go.controller;
 
+import com.rally.up.go.dto.JwtResponseDTO;
+import com.rally.up.go.dto.LoginRequestDTO;
+import com.rally.up.go.dto.RefreshTokenRequestDTO;
+import com.rally.up.go.dto.RegisterRequestDTO;
 import com.rally.up.go.exception.TokenRefreshException;
 import com.rally.up.go.model.*;
 import com.rally.up.go.repository.QrCodeRepository;
@@ -135,7 +139,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
         user.setEnabled(false);
         user.setRoles(Set.of("USER"));
-        user.setBalance(0.0);
+        user.setBalance(0);
 
         QrCode qrCode = new QrCode();
         qrCode.setNewUUID();
@@ -150,7 +154,9 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully!");
     }
 
+    @PostMapping("/register-shop/{shopName}")
     public ResponseEntity<String> registerShop(
+            @PathVariable String shopName,
             @RequestBody @Parameter(description = "Details for new user registration") RegisterRequestDTO registrationRequest) {
         if (userRepository.findByEmail(registrationRequest.email()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is already in use!");
@@ -161,10 +167,11 @@ public class AuthController {
 
         ShopUser user = new ShopUser();
         user.setUsername(registrationRequest.name());
+        user.setShopName(shopName);
         user.setEmail(registrationRequest.email());
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
         user.setEnabled(false);
-        user.setRoles(Set.of("USER"));
+        user.setRoles(Set.of("SHOP"));
 
 
         userRepository.save(user);

@@ -1,10 +1,11 @@
-package com.rally.up.go.model;
+package com.rally.up.go.dto;
 
 public record ProductResponseDTO(
-        Long id,
+        long id,
+        long shopId,
         String name,
         String description,
-        Double price,
+        int price,
         String imageUrl
         ) {
 }

@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class Coupon {
 
@@ -31,4 +30,9 @@ public class Coupon {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private ClientUser clientUser;
+
+    public Coupon() {
+        this.code = UUID.randomUUID().toString();
+        this.dateCreated = LocalDateTime.now();
+    }
 }

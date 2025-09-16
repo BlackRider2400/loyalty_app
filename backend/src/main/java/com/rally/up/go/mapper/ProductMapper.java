@@ -1,7 +1,7 @@
 package com.rally.up.go.mapper;
 
 import com.rally.up.go.model.Product;
-import com.rally.up.go.model.ProductResponseDTO;
+import com.rally.up.go.dto.ProductResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +17,11 @@ public class ProductMapper {
     public ProductResponseDTO toDto(Product product) {
         return new ProductResponseDTO(
                 product.getId(),
+                product.getShop().getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                (baseUrl + "/" +  filePath + "/" + product.getImage())
+                (product.getImage() == null ? null : baseUrl + product.getImage())
         );
     }
 }

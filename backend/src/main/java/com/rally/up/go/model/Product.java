@@ -1,10 +1,7 @@
 package com.rally.up.go.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +18,10 @@ public class Product {
 
     private String name;
     private String description;
-    private Double price;
+    private int price;
     private String image;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shop_user_id", nullable = false)
+    private ShopUser shop;
 }

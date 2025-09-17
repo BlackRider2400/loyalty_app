@@ -1,3 +1,4 @@
+import CouponCard from "@/components/CouponCard";
 import Footer from "@/components/Footer";
 import ImageCard from "@/components/ImageCard";
 
@@ -8,6 +9,56 @@ import Link from "next/link";
 import React from "react";
 
 const UserPage = () => {
+    const clubs = [
+        {
+            id: 1,
+            name: "11 Punkt",
+            imgUrl: "/images/clubImage.jpg",
+        },
+        {
+            id: 2,
+            name: "Frans Otten Stadion",
+            imgUrl: "/images/clubImage.jpg",
+        },
+        {
+            id: 3,
+            name: "Frans Otten Stadion",
+            imgUrl: "/images/clubImage.jpg",
+        },
+    ];
+
+    const AvailableCoupons: Coupon[] = [
+        {
+            id: "c1",
+            title: "Abc -50%",
+            location: "Frans Otten Station",
+            description: "Half-price coffee at reception.",
+            imgUrl: "/images/coffee.jpg",
+            priceCoins: 150,
+            code: "COF50-7KQ8",
+            enabled: true,
+        },
+        {
+            id: "c2",
+            title: "Squash Court -20%",
+            location: "Frans Otten Station",
+            description: "20% off next court rental.",
+            imgUrl: "/images/coffee.jpg",
+            priceCoins: 400,
+            code: "COF50-7KQ8",
+            enabled: true,
+        },
+        {
+            id: "c3",
+            title: "Protein Bar FREE",
+            location: "Frans Otten Station",
+            description: "Grab one free protein bar.",
+            imgUrl: "/images/coffee.jpg",
+            priceCoins: 250,
+            code: "COF50-7KQ8",
+            enabled: true,
+        },
+    ];
     return (
         <div className="flex flex-col items-center justify-center ">
             <section className="bg-primary-blue w-full flex flex-col px-4">
@@ -59,21 +110,16 @@ const UserPage = () => {
                         View Each Club&apos;s Offer
                     </h1>
                     <div className="flex overflow-x-auto">
-                        <ImageCard
-                            imgUrl="/images/clubImage.jpg"
-                            alt="club"
-                            text="Frans Otten Stadion"
-                        />
-                        <ImageCard
-                            imgUrl="/images/clubImage.jpg"
-                            alt="club"
-                            text="Frans Otten Stadion"
-                        />
-                        <ImageCard
-                            imgUrl="/images/clubImage.jpg"
-                            alt="club"
-                            text="Frans Otten Stadion"
-                        />
+                        {clubs.map((club) => (
+                            <ImageCard
+                                key={club.id}
+                                imgUrl={club.imgUrl}
+                                alt={club.name}
+                                text={club.name}
+                                active={club.id === 1}
+                            />
+                        ))}
+
                         <div className="rounded-[16px] mx-4 relative flex-center bg-[#242B581A] min-w-[130px]">
                             <span
                                 aria-hidden="true"
@@ -91,53 +137,8 @@ const UserPage = () => {
                         Collect Coupons
                     </h1>
                     <div className="grid grid-cols-2 gap-4">
-                        {[1, 2, 3, 3, 3, 1, 1, 1].map((_, idx) => (
-                            <div
-                                key={idx}
-                                className="relative overflow-hidden rounded-[16px] h-40 sm:h-48"
-                            >
-                                <Image
-                                    src="/images/coffee.jpg"
-                                    alt="coffee"
-                                    fill
-                                    className="object-cover"
-                                    // sizes="(min-width: 640px) 50vw, 50vw"
-                                />
-
-                                <span
-                                    aria-hidden
-                                    className="absolute inset-0 bg-black/20"
-                                />
-
-                                <div className="absolute inset-3 flex gap-2 flex-col justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Image
-                                            src="/icons/pin.svg"
-                                            width={16}
-                                            height={16}
-                                            alt="pin"
-                                            className=""
-                                        />
-                                        <p className="text-white ">
-                                            Frans Otten Staion
-                                        </p>
-                                    </div>
-                                    <p className="text-white self-center font-bold text-[24px]">
-                                        Coffee 50% Off
-                                    </p>
-                                    <div className="flex items-end self-end gap-1 text-white">
-                                        <p className="text-[24px] font-bold">
-                                            150
-                                        </p>
-                                        <p className="mb-1 text-primary-orange font-bold text-[14px]">
-                                            Rally
-                                            <span className="text-light-blue">
-                                                Coins
-                                            </span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                        {AvailableCoupons.map((coupon, idx) => (
+                            <CouponCard key={idx} coupon={coupon} />
                         ))}
                     </div>
                 </div>

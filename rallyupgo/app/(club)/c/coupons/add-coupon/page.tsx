@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -28,18 +28,7 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
-// --- (1) Typy / schema -------------------------------------------------------
-export type Coupon = {
-    id: string;
-    location: string;
-    title: string;
-    description: string;
-    imgUrl: string;
-    priceCoins: number;
-    code?: string;
-    enabled: boolean;
-};
-
+// --- (1) Schema --------------------------------------------------------------
 const couponSchema = z.object({
     title: z.string().min(2, "Title is too short").max(60),
     description: z.string().min(5, "Description is too short").max(240),
@@ -61,8 +50,7 @@ const couponSchema = z.object({
 type CouponFormInput = z.input<typeof couponSchema>;
 type CouponFormValues = z.output<typeof couponSchema>;
 
-// --- (2) Mini-uploader (drag & drop + podgląd) -------------------------------
-
+// --- (2) Mini-uploader (drag & drop + preview) -------------------------------
 function CoverUploader({
     file,
     onFile,
@@ -125,7 +113,6 @@ function CoverUploader({
                 <input {...getInputProps()} />
                 {preview ? (
                     <>
-                        {/* Use a plain <img> for blob: preview to avoid Next/Image constraints */}
                         <Image
                             src={preview}
                             alt="Cover preview"
@@ -162,24 +149,10 @@ function CoverUploader({
     );
 }
 
-// --- (3) Strona edycji -------------------------------------------------------
-const EditCouponPage = () => {
+// --- (3) /add-coupon page (CREATE) -------------------------------------------
+const AddCouponPage = () => {
     const router = useRouter();
-    const { id } = useParams<{ id: string }>();
-
-    const [initial, setInitial] = React.useState<Coupon | null>(null);
-    useEffect(() => {
-        setInitial({
-            id: id as string,
-            location: "Main club",
-            title: "Abc -50%",
-            description: "Half-price coffee at reception.",
-            imgUrl: "/images/coffee.jpg", // just backend info; not used in form
-            priceCoins: 150,
-            code: "COF50-7KQ8",
-            enabled: true,
-        });
-    }, [id]);
+    const [submitting, setSubmitting] = useState(false);
 
     const form = useForm<CouponFormInput, undefined, CouponFormValues>({
         resolver: zodResolver(couponSchema),
@@ -188,24 +161,10 @@ const EditCouponPage = () => {
             description: "",
             priceCoins: 0,
             enabled: true,
-            // file is required, user must pick it
+            // file is required; user must pick it
         },
         mode: "onChange",
     });
-
-    useEffect(() => {
-        if (initial) {
-            form.reset({
-                title: initial.title,
-                description: initial.description,
-                priceCoins: initial.priceCoins,
-                enabled: initial.enabled,
-                // do NOT prefill file
-            });
-        }
-    }, [initial, form]);
-
-    const [submitting, setSubmitting] = useState(false);
 
     const onSubmit: SubmitHandler<CouponFormValues> = async (values) => {
         setSubmitting(true);
@@ -215,42 +174,21 @@ const EditCouponPage = () => {
             fd.append("description", values.description);
             fd.append("priceCoins", String(values.priceCoins));
             fd.append("enabled", String(values.enabled));
-            fd.append("file", values.file); // the actual image picked
+            fd.append("file", values.file);
 
-            // example PUT; adjust to your API
-            // await fetch(`/api/coupons/${id}`, { method: "PUT", body: fd });
+            // Example POST; adjust to your API contract as needed:
+            // await fetch(`/api/coupons`, { method: "POST", body: fd });
 
-            toast.success("Coupon updated successfully!");
+            toast.success("Coupon created successfully!");
             router.push(ROUTES.CLUB_COUPONS || "/c/coupons");
         } catch (e) {
             console.error(e);
-            alert("Failed to update coupon.");
+            alert("Failed to create coupon.");
         } finally {
             setSubmitting(false);
         }
     };
 
-    if (!initial) {
-        return (
-            <div className="min-h-screen flex flex-col bg-primary-blue text-white">
-                <section className="bg-primary-orange w-full pt-12 pb-5 flex-center justify-between px-3">
-                    <Link href={ROUTES.CLUB_COUPONS || "/c/coupons"}>
-                        <Image
-                            src="/icons/arrow.svg"
-                            alt="Back"
-                            width={24}
-                            height={24}
-                        />
-                    </Link>
-                    <h1 className="text-[20px] font-semibold text-white">
-                        Edit Coupon
-                    </h1>
-                    <span className="w-6 h-6" />
-                </section>
-                <main className="flex-1 p-4">Loading…</main>
-            </div>
-        );
-    }
     return (
         <div className="min-h-screen flex flex-col bg-primary-blue">
             {/* Header */}
@@ -264,10 +202,11 @@ const EditCouponPage = () => {
                     />
                 </Link>
                 <h1 className="text-[20px] font-semibold text-white">
-                    Edit Coupon
+                    Add Coupon
                 </h1>
                 <span className="w-6 h-6" />
             </section>
+
             {/* Form */}
             <main className="flex-1 overflow-y-auto p-4 pb-10">
                 <Form {...form}>
@@ -364,7 +303,6 @@ const EditCouponPage = () => {
                                                 name={name}
                                                 ref={ref}
                                                 onBlur={onBlur}
-                                                // pozwala skasować pole do pustego stringa bez krzyczenia TS
                                                 value={
                                                     value === undefined ||
                                                     value === null ||
@@ -439,7 +377,7 @@ const EditCouponPage = () => {
                                 className="w-full h-12 rounded-2xl bg-primary-orange hover:bg-light-blue text-white font-semibold"
                                 disabled={submitting}
                             >
-                                {submitting ? "Saving…" : "Save changes"}
+                                {submitting ? "Saving…" : "Create coupon"}
                             </Button>
                         </div>
                     </form>
@@ -448,4 +386,5 @@ const EditCouponPage = () => {
         </div>
     );
 };
-export default EditCouponPage;
+
+export default AddCouponPage;

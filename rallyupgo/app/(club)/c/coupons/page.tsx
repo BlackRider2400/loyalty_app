@@ -1,55 +1,56 @@
 import React from "react";
-import Footer from "@/components/Footer";
+
 import { ROUTES } from "@/constants/routes";
 import Image from "next/image";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-import ClubCouponCard from "@/components/ClubCoupon";
+import ClubCouponCard from "@/components/ClubCouponCard";
+import ClubFooter from "@/components/ClubFooter";
+import { Button } from "@/components/ui/button";
 
-type AvailableCoupon = {
-    id: string;
-    title: string;
-    description: string;
-    imgUrl: string;
-    priceCoins: number;
-    code?: string;
-};
-
-const AvailableCoupons: AvailableCoupon[] = [
+const AvailableCoupons: Coupon[] = [
     {
         id: "c1",
         title: "Abc -50%",
+        location: "Frans Otten Station",
         description: "Half-price coffee at reception.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 150,
         code: "COF50-7KQ8",
+        enabled: true,
     },
     {
         id: "c2",
         title: "Squash Court -20%",
+        location: "Frans Otten Station",
         description: "20% off next court rental.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 400,
         code: "COF50-7KQ8",
+        enabled: true,
     },
     {
         id: "c3",
         title: "Protein Bar FREE",
+        location: "Frans Otten Station",
         description: "Grab one free protein bar.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 250,
         code: "COF50-7KQ8",
+        enabled: true,
     },
 ];
 
-const HistoryCoupon: AvailableCoupon[] = [
+const HistoryCoupon: Coupon[] = [
     {
         id: "c4",
         title: "Yoga Class -30%",
         description: "30% off next yoga class.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 300,
+        location: "",
+        enabled: true,
     },
     {
         id: "c5",
@@ -57,6 +58,8 @@ const HistoryCoupon: AvailableCoupon[] = [
         description: "20% off any smoothie.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 200,
+        location: "",
+        enabled: true,
     },
 ];
 
@@ -64,7 +67,7 @@ const ClubCouponsPage = () => {
     return (
         <div className="min-h-screen flex flex-col bg-primary-blue">
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center justify-between px-3">
-                <Link href={ROUTES.USER_HOME}>
+                <Link href={ROUTES.CLUB_HOME}>
                     <Image
                         src="/icons/arrow.svg"
                         alt="Arrow"
@@ -101,7 +104,13 @@ const ClubCouponsPage = () => {
                         </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="All" className="mt-5">
+                    <Link href={ROUTES.CLUB_ADD_COUPON}>
+                        <Button className="bg-primary-orange hover:bg-light-blue text-white text-[18px] font-semibold rounded-2xl h-12 w-full mt-4">
+                            Add New Coupon +
+                        </Button>
+                    </Link>
+
+                    <TabsContent value="All" className="mt-4">
                         <div className="flex flex-col gap-6">
                             {AvailableCoupons.map((c) => (
                                 <ClubCouponCard key={c.id} coupon={c} />
@@ -109,14 +118,14 @@ const ClubCouponsPage = () => {
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="Active" className="mt-5">
+                    <TabsContent value="Active" className="mt-4">
                         <div className="flex flex-col gap-6">
                             {HistoryCoupon.map((c) => (
                                 <ClubCouponCard key={c.id} coupon={c} />
                             ))}
                         </div>
                     </TabsContent>
-                    <TabsContent value="Inactive" className="mt-5">
+                    <TabsContent value="Inactive" className="mt-4">
                         <div className="flex flex-col gap-6">
                             {HistoryCoupon.map((c) => (
                                 <ClubCouponCard key={c.id} coupon={c} />
@@ -127,7 +136,7 @@ const ClubCouponsPage = () => {
             </main>
 
             <div className="fixed bottom-0 left-0 z-40">
-                <Footer />
+                <ClubFooter />
             </div>
         </div>
     );

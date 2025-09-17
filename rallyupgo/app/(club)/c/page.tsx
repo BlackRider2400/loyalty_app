@@ -6,17 +6,40 @@ import { ROUTES } from "@/constants/routes";
 import ClubFooter from "@/components/ClubFooter";
 import React from "react";
 import { Button } from "@/components/ui/button";
-
-const Stat = ({ label, value }: { label: string; value: string }) => (
-    <div className="bg-white rounded-2xl p-4 flex-1 shadow-sm border border-neutral-200">
-        <p className="text-neutral-500 text-xs">{label}</p>
-        <p className="text-primary-blue text-2xl font-extrabold mt-1">
-            {value}
-        </p>
-    </div>
-);
-
+import CouponCard from "@/components/CouponCard";
 const ClubHome = () => {
+    const AvailableCoupons: Coupon[] = [
+        {
+            id: "c1",
+            title: "Abc -50%",
+            location: "Frans Otten Station",
+            description: "Half-price coffee at reception.",
+            imgUrl: "/images/coffee.jpg",
+            priceCoins: 150,
+            code: "COF50-7KQ8",
+            enabled: true,
+        },
+        {
+            id: "c2",
+            title: "Squash Court -20%",
+            location: "Frans Otten Station",
+            description: "20% off next court rental.",
+            imgUrl: "/images/coffee.jpg",
+            priceCoins: 400,
+            code: "COF50-7KQ8",
+            enabled: true,
+        },
+        {
+            id: "c3",
+            title: "Protein Bar FREE",
+            location: "Frans Otten Station",
+            description: "Grab one free protein bar.",
+            imgUrl: "/images/coffee.jpg",
+            priceCoins: 250,
+            code: "COF50-7KQ8",
+            enabled: true,
+        },
+    ];
     return (
         <div className="min-h-screen flex flex-col">
             <section className="bg-primary-blue w-full flex flex-col px-4">
@@ -45,32 +68,35 @@ const ClubHome = () => {
                     </h1>
                 </div>
 
-                <div className="py-4">
-                    <Link href={ROUTES.CLUB_SCANNER}>
-                        <Button className="bg-primary-orange hover:bg-light-blue text-white rounded-2xl h-12 w-full">
-                            <Image
-                                src="/icons/qrcodeWhite.svg"
-                                alt="scan"
-                                width={20}
-                                height={20}
-                                className="mr-2"
-                            />
-                            Start scanning
+                <div className="py-4 w-full flex gap-2.5">
+                    <div className="flex-1 flex-center gap-2 bg-white rounded-2xl py-3 h-13">
+                        <p className="flex-center flex-col leading-4 font-bold text-[14px]">
+                            Scans <span>today: </span>
+                        </p>
+                        <p className="font-bold text-[22px]">34</p>
+                    </div>
+                    <div className="flex-1 flex-center gap-2 bg-white rounded-2xl py-3 h-13">
+                        <p className="flex flex-col leading-4 font-bold text-[14px] ">
+                            Scans <span>this week: </span>
+                        </p>
+                        <p className="font-bold text-[22px]">182</p>
+                    </div>
+                </div>
+
+                <div className="w-full mb-6">
+                    <Link href={ROUTES.CLUB_METRICS}>
+                        <Button className="bg-light-blue hover:bg-primary-orange text-white text-[18px] font-semibold rounded-2xl h-12 w-full ">
+                            View Detailed Metrics
                         </Button>
                     </Link>
                 </div>
             </section>
 
             <section className="flex-1 bg-[#F8F9FB] w-full p-4 space-y-6">
-                <div className="flex gap-3">
-                    <Stat label="Scans today" value="34" />
-                    <Stat label="This week" value="182" />
-                </div>
-
                 <div className="w-full">
                     <div className="flex items-center justify-between mb-2">
                         <h2 className="text-primary-blue text-[16px] font-semibold">
-                            Your coupons
+                            Your active coupons
                         </h2>
                         <Link
                             href={ROUTES.CLUB_COUPONS}
@@ -79,27 +105,22 @@ const ClubHome = () => {
                             Manage
                         </Link>
                     </div>
+                    <Link href={ROUTES.CLUB_ADD_COUPON}>
+                        <Button className="bg-primary-orange hover:bg-light-blue text-white text-[18px] font-semibold rounded-2xl h-10 w-full mb-4">
+                            Add New Coupon +
+                        </Button>
+                    </Link>
 
-                    <div className="flex overflow-x-auto">
-                        {[1, 2, 3].map((i) => (
-                            <div key={i} className="relative shrink-0 mr-4">
-                                <Image
-                                    src="/images/largeImage.png"
-                                    alt="coupon"
-                                    width={220}
-                                    height={140}
-                                    className="rounded-[16px]"
-                                />
-                                <p className="absolute bottom-2 left-2 w-fit text-white max-w-[180px] font-extrabold text-[18px]">
-                                    Coffee -50%
-                                </p>
-                            </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {AvailableCoupons.map((coupon) => (
+                            <CouponCard key={coupon.id} coupon={coupon} />
                         ))}
                     </div>
                 </div>
             </section>
-
-            <ClubFooter />
+            <div className="w-full h-[100px] bg-[#F8F9FB]">
+                <ClubFooter />
+            </div>
         </div>
     );
 };

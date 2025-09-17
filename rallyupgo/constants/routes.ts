@@ -6,7 +6,9 @@ export const ROUTES = {
 
     CLUB_HOME: "/c",
     CLUB_SCANNER: "/c/scanner",
+    CLUB_METRICS: "/c/metrics",
     CLUB_COUPONS: "/c/coupons",
+    CLUB_ADD_COUPON: "/c/coupons/add-coupon",
     CLUB_SETTINGS: "/c/settings",
     CLUB_TERMS: "/c/settings/terms",
 };

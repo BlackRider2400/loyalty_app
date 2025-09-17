@@ -41,7 +41,7 @@ const Item = ({
 
 const ClubFooter = () => {
     return (
-        <section className="bg-white w-full h-[100px] flex-center">
+        <section className="bg-white w-full h-[100px] flex-center fixed bottom-0 left-0 right-0">
             <Item
                 href="/c"
                 label="Home"

@@ -14,6 +14,7 @@ import QrGenerator from "@/components/QRcode/Generator";
 
 type Coupon = {
     id: string;
+    location: string;
     title: string;
     description: string;
     imgUrl: string;
@@ -98,7 +99,7 @@ const Card = ({ coupon }: { coupon: Coupon }) => {
                         height={16}
                         alt="pin"
                     />
-                    <p className="text-white">Frans Otten Station</p>
+                    <p className="text-white">{coupon.location}</p>
                 </div>
                 <div className="self-center text-center mt-2">
                     <p className="text-white font-bold text-[24px] uppercase">

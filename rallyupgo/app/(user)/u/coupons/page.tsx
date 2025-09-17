@@ -5,58 +5,59 @@ import Image from "next/image";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-import CouponCard from "@/components/Coupon";
+import CouponCard from "@/components/CouponCard";
 
-type AvailableCoupon = {
-    id: string;
-    title: string;
-    description: string;
-    imgUrl: string;
-    priceCoins: number;
-    code?: string;
-};
-
-const AvailableCoupons: AvailableCoupon[] = [
+const AvailableCoupons: Coupon[] = [
     {
         id: "c1",
         title: "Abc -50%",
+        location: "Frans Otten Station",
         description: "Half-price coffee at reception.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 150,
         code: "COF50-7KQ8",
+        enabled: true,
     },
     {
         id: "c2",
         title: "Squash Court -20%",
+        location: "Frans Otten Station",
         description: "20% off next court rental.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 400,
         code: "COF50-7KQ8",
+        enabled: true,
     },
     {
         id: "c3",
         title: "Protein Bar FREE",
+        location: "Frans Otten Station",
         description: "Grab one free protein bar.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 250,
         code: "COF50-7KQ8",
+        enabled: true,
     },
 ];
 
-const HistoryCoupon: AvailableCoupon[] = [
+const HistoryCoupon: Coupon[] = [
     {
         id: "c4",
         title: "Yoga Class -30%",
+        location: "Frans Otten Station",
         description: "30% off next yoga class.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 300,
+        enabled: true,
     },
     {
         id: "c5",
         title: "Smoothie -20%",
+        location: "Frans Otten Station",
         description: "20% off any smoothie.",
         imgUrl: "/images/coffee.jpg",
         priceCoins: 200,
+        enabled: true,
     },
 ];
 

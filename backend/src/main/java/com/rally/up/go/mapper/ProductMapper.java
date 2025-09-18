@@ -14,6 +14,9 @@ public class ProductMapper {
     @Value("${upload.dir}")
     private String filePath;
 
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
     public ProductResponseDTO toDto(Product product) {
         return new ProductResponseDTO(
                 product.getId(),
@@ -21,7 +24,7 @@ public class ProductMapper {
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                (product.getImage() == null ? null : baseUrl + product.getImage())
+                (product.getImage() == null ? null : baseUrl + contextPath + product.getImage())
         );
     }
 }

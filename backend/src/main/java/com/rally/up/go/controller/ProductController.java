@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @RestController
@@ -39,18 +40,19 @@ public class ProductController {
     @Value("${upload.dir}")
     private String filePath;
 
+
     // CREATE
     @PostMapping
     public ResponseEntity<ProductResponseDTO> addProduct(@AuthenticationPrincipal UserDetails userDetails,
-            @RequestPart("product") ProductResponseDTO dto,
-            @RequestPart(value = "image", required = false) MultipartFile image
+                                                         @RequestPart("product") ProductResponseDTO dto,
+                                                         @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
 
         String imageUrl = null;
         if (image != null && !image.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-            Path filePath = Paths.get("uploads", fileName);
-            Files.copy(image.getInputStream(), filePath);
+            Path absoluteFilePath = Paths.get(filePath, fileName);
+            Files.copy(image.getInputStream(), absoluteFilePath, StandardCopyOption.REPLACE_EXISTING);
             imageUrl = "/uploads/" + fileName;
         }
 

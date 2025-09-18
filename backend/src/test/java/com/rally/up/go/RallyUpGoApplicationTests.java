@@ -9,5 +9,4 @@ class RallyUpGoApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

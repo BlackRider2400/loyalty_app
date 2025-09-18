@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -32,6 +33,8 @@ public abstract class User {
 
     @Column(name = "enabled")
     private boolean enabled;
+
+    private LocalDateTime registeredAt;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))

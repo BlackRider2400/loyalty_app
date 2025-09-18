@@ -30,6 +30,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -140,6 +141,7 @@ public class AuthController {
         user.setEnabled(false);
         user.setRoles(Set.of("USER"));
         user.setBalance(0);
+        user.setRegisteredAt(LocalDateTime.now());
 
         QrCode qrCode = new QrCode();
         qrCode.setNewUUID();
@@ -171,6 +173,7 @@ public class AuthController {
         user.setEmail(registrationRequest.email());
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
         user.setEnabled(false);
+        user.setRegisteredAt(LocalDateTime.now());
         user.setRoles(Set.of("SHOP"));
 
 

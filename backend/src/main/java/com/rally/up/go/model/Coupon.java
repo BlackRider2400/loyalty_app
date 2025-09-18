@@ -19,7 +19,7 @@ public class Coupon {
     private Long id;
 
     private String code;
-    private boolean used;
+    private Boolean used;
     private LocalDateTime dateCreated;
     private LocalDateTime dateUsed;
 
@@ -34,5 +34,6 @@ public class Coupon {
     public Coupon() {
         this.code = UUID.randomUUID().toString();
         this.dateCreated = LocalDateTime.now();
+        this.used = false;
     }
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,8 +23,8 @@ public class ShopUser extends User {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
-    public ShopUser(String username, String password, String email, boolean enabled, String shopName) {
-        super(null, username, password, email, enabled, null); // id = null
+    public ShopUser(String username, String password, String email, boolean enabled, LocalDateTime registeredAt, String shopName) {
+        super(null, username, password, email, enabled, registeredAt, Set.of("SHOP")); // id = null
         this.shopName = shopName;
     }
 

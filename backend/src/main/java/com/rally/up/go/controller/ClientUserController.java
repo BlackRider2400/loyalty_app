@@ -1,11 +1,14 @@
 package com.rally.up.go.controller;
 
 import com.rally.up.go.dto.ClientUserDTO;
+import com.rally.up.go.dto.CouponDTO;
 import com.rally.up.go.dto.ProductResponseDTO;
 import com.rally.up.go.dto.ShopUserDTO;
+import com.rally.up.go.exception.NotEnoughBalanceException;
 import com.rally.up.go.exception.ProductNotFoundException;
 import com.rally.up.go.exception.UuidNotFoundException;
 import com.rally.up.go.mapper.ClientUserMapper;
+import com.rally.up.go.mapper.CouponMapper;
 import com.rally.up.go.mapper.ProductMapper;
 import com.rally.up.go.mapper.ShopUserMapper;
 import com.rally.up.go.model.ClientUser;
@@ -28,6 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,6 +58,9 @@ public class ClientUserController {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private CouponMapper couponMapper;
 
 
 
@@ -92,33 +99,33 @@ public class ClientUserController {
     }
 
     // create coupon
-    @PostMapping("/create-coupon")
-    public ResponseEntity<Boolean> createCoupon(
+    @GetMapping("/coupon")
+    public ResponseEntity<CouponDTO> createCoupon(
             @RequestParam Long productId,
             @AuthenticationPrincipal UserDetails userDetails) {
 
         ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User with " + userDetails.getUsername() + "not found."));
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId.toString()));
-        if (clientUser.getBalance() >= product.getPrice()) {
-            clientUser.removeBalance(product.getPrice());
+
+        Optional<Coupon> notUsedCoupon =
+                couponRepository.findFirstByClientUser_IdAndProduct_IdAndUsed(clientUser.getId(), productId, false);
+
+        if (notUsedCoupon.isPresent() && clientUser.getBalance() >= product.getPrice()) {
+            return ResponseEntity.ok().body(couponMapper.toDto(notUsedCoupon.get()));
+        }
+        else if (clientUser.getBalance() >= product.getPrice()) {
             Coupon coupon = new Coupon();
             coupon.setProduct(product);
             coupon.setClientUser(clientUser);
             clientUser.getCouponList().add(coupon);
 
             clientUserRepository.save(clientUser);
-            return ResponseEntity.ok().body(true);
+            return ResponseEntity.ok().body(couponMapper.toDto(coupon));
         }
-
-        return ResponseEntity.badRequest().body(false);
-    }
-
-    // get coupon
-    @GetMapping("/coupon")
-    public ResponseEntity<Coupon> getCoupon(@RequestParam Long id) {
-        Coupon coupon = couponRepository.findById(id).orElseThrow(() -> new RuntimeException("Coupon not found"));
-        return ResponseEntity.ok().body(coupon);
+        else {
+            throw new NotEnoughBalanceException(product.getPrice() - clientUser.getBalance());
+        }
     }
 
 

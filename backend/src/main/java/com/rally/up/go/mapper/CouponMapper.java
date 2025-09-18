@@ -16,7 +16,7 @@ public class CouponMapper {
                 coupon.getId(),
                 productMapper.toDto(coupon.getProduct()),
                 coupon.getCode(),
-                coupon.isUsed(),
+                coupon.getUsed(),
                 coupon.getDateCreated()
 
         );

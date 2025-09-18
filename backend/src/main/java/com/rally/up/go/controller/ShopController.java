@@ -1,6 +1,7 @@
 package com.rally.up.go.controller;
 
 import com.rally.up.go.dto.ShopUserDTO;
+import com.rally.up.go.exception.NotEnoughBalanceException;
 import com.rally.up.go.exception.UuidNotFoundException;
 import com.rally.up.go.mapper.ShopUserMapper;
 import com.rally.up.go.model.Coupon;
@@ -50,7 +51,7 @@ public class ShopController {
     }
 
 
-    @PostMapping("/addCredits")
+    @PostMapping("/add-credits")
     public ResponseEntity<String> addCreditsToUser(@RequestBody QrCodeCreditsDTO qrCodeCreditsDTO) {
 
         if(qrCodeCreditsDTO.credits() < 0){
@@ -66,28 +67,28 @@ public class ShopController {
         return ResponseEntity.ok("Added " + qrCodeCreditsDTO.credits() + " credits to your account.");
     }
 
-    @PostMapping("/useCoupon")
+    @PostMapping("/use-coupon")
     public ResponseEntity<Boolean> useCoupon(@RequestBody String uuid) {
         Coupon coupon = couponRepository.findByCode(uuid).orElseThrow(() -> new UuidNotFoundException(uuid));
 
-        if (coupon.isUsed()) {
+        if (coupon.getUsed()) {
             throw new IllegalArgumentException("Coupon is already used.");
         }
 
-        coupon.setUsed(true);
-        coupon.setDateUsed(LocalDateTime.now());
+        if (coupon.getClientUser().getBalance() >= coupon.getProduct().getPrice()) {
 
-        return ResponseEntity.ok().body(true);
+            coupon.getClientUser().removeBalance(coupon.getProduct().getPrice());
+            coupon.setUsed(true);
+            coupon.setDateUsed(LocalDateTime.now());
+
+            return ResponseEntity.ok().body(true);
+        }
+        else {
+            couponRepository.deleteUnusedCoupons(coupon.getClientUser().getId(), coupon.getProduct().getId());
+            throw new NotEnoughBalanceException(coupon.getProduct().getPrice() - coupon.getClientUser().getBalance());
+        }
+
+
     }
-
-    @PostMapping("/checkCoupon")
-    public ResponseEntity<Coupon> checkCoupon(@RequestBody String uuid) {
-        Coupon coupon = couponRepository.findByCode(uuid).orElseThrow(() -> new UuidNotFoundException(uuid));
-
-        return ResponseEntity.ok().body(coupon);
-    }
-
-
-
 
 }

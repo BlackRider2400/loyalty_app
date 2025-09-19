@@ -27,16 +27,16 @@ const ReadonlyRow = ({
 );
 
 const ProfilePage = () => {
-    const user = {
-        username: "twojaStara69",
-        email: "twojaStara69@gmail.com",
+    const club = {
+        username: "Frans Otten Stadion",
+        email: "frans.otten@stadion.com",
         phone: "+48 123 456 789",
     };
 
     return (
         <div className="min-h-screen flex flex-col">
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center px-3 relative">
-                <Link href={ROUTES.USER_SETTINGS}>
+                <Link href={ROUTES.CLUB_SETTINGS}>
                     <Image
                         src="/icons/arrow.svg"
                         width={24}
@@ -51,10 +51,10 @@ const ProfilePage = () => {
             </section>
 
             <section className="flex-1 bg-primary-blue p-4 py-8 space-y-5">
-                <ReadonlyRow label="Username" value={user.username} />
-                <ReadonlyRow label="Email" value={user.email} />
+                <ReadonlyRow label="Username" value={club.username} />
+                <ReadonlyRow label="Email" value={club.email} />
 
-                <ReadonlyRow label="Phone" value={user.phone} />
+                <ReadonlyRow label="Phone" value={club.phone} />
             </section>
 
             <Footer />

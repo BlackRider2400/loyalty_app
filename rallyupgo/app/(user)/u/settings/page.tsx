@@ -102,7 +102,7 @@ const Settings = () => {
                             text="Get RallyCoins"
                         />
                     </SheetTrigger>
-                    <SheetContent className="w-full bg-primary-blue">
+                    <SheetContent className="w-full bg-primary-blue border-none">
                         <SheetHeader>
                             <SheetTitle>Are you absolutely sure?</SheetTitle>
                             <SheetDescription>
@@ -122,7 +122,7 @@ const Settings = () => {
                             text="Contact Us"
                         />
                     </SheetTrigger>
-                    <SheetContent className="w-full bg-primary-blue">
+                    <SheetContent className="w-full bg-primary-blue border-none">
                         <SheetHeader>
                             <SheetTitle className="text-white">
                                 Contact Us
@@ -140,7 +140,7 @@ const Settings = () => {
                     <Tile
                         alt="scale"
                         imgUrl="/icons/scale.svg"
-                        text="Privacy Information"
+                        text="Privacy & Terms and Conditions"
                     />
                 </Link>
 

@@ -86,12 +86,12 @@ export default function ClubSettings() {
                             label="Scanner tips"
                         />
                     </SheetTrigger>
-                    <SheetContent className="w-full bg-primary-blue">
+                    <SheetContent className="w-full bg-primary-blue border-none">
                         <SheetHeader>
                             <SheetTitle className="text-white">
                                 Scanner quick guide
                             </SheetTitle>
-                            <SheetDescription className="text-white">
+                            <SheetDescription className="text-white ">
                                 • Ensure good lighting
                                 <br />
                                 • Keep QR fully in frame
@@ -99,14 +99,18 @@ export default function ClubSettings() {
                                 • Use rear camera for better focus
                                 <br />
                                 <br />
-                                We’ll add device selection & torch toggle later.
+                                We&apos;ll add device selection & torch toggle
+                                later.
                             </SheetDescription>
                         </SheetHeader>
                     </SheetContent>
                 </Sheet>
 
                 <Link href={ROUTES.CLUB_TERMS}>
-                    <Row icon="/icons/scale.svg" label="Privacy & Terms" />
+                    <Row
+                        icon="/icons/scale.svg"
+                        label="Privacy & Terms and Conditions"
+                    />
                 </Link>
 
                 <AlertDialog>

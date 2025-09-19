@@ -9,86 +9,7 @@ import ClubFooter from "@/components/ClubFooter";
 import BasicMetrics from "@/components/BasicMetrics";
 
 import DailyMetrics from "@/components/DailyMetrics";
-
-const scansByHourChartData = {
-    labels: [
-        "00",
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20",
-        "21",
-        "22",
-        "23",
-    ],
-    datasets: [
-        {
-            label: "Monday",
-            data: [
-                2, 1, 1, 1, 2, 3, 5, 12, 20, 28, 35, 42, 48, 52, 49, 45, 43, 40,
-                38, 30, 22, 15, 9, 5,
-            ],
-        },
-        {
-            label: "Tuesday",
-            data: [
-                2, 1, 1, 1, 2, 3, 6, 14, 22, 30, 38, 44, 50, 55, 51, 46, 44, 41,
-                39, 31, 23, 16, 10, 6,
-            ],
-        },
-        {
-            label: "Wednesday",
-            data: [
-                2, 1, 1, 1, 2, 3, 5, 11, 19, 27, 34, 41, 47, 50, 47, 43, 41, 38,
-                35, 28, 21, 14, 8, 5,
-            ],
-        },
-        {
-            label: "Thursday",
-            data: [
-                2, 1, 1, 1, 2, 3, 6, 15, 24, 32, 40, 47, 53, 57, 54, 49, 47, 44,
-                40, 33, 24, 17, 11, 7,
-            ],
-        },
-        {
-            label: "Friday",
-            data: [
-                3, 2, 2, 2, 3, 4, 7, 16, 25, 34, 42, 49, 55, 60, 58, 52, 50, 47,
-                45, 40, 30, 22, 16, 12,
-            ],
-        },
-        {
-            label: "Saturday",
-            data: [
-                4, 3, 2, 2, 2, 3, 5, 10, 18, 26, 33, 39, 45, 50, 52, 50, 48, 50,
-                52, 48, 40, 30, 22, 16,
-            ],
-        },
-        {
-            label: "Sunday",
-            data: [
-                3, 2, 1, 1, 1, 2, 4, 8, 14, 20, 27, 33, 38, 42, 44, 43, 41, 40,
-                42, 38, 30, 22, 15, 10,
-            ],
-        },
-    ],
-};
+import SeeAllMetrics from "@/components/SeeAllMetrics";
 
 const Metrics = () => {
     return (
@@ -140,7 +61,9 @@ const Metrics = () => {
                     </TabsContent>
 
                     <TabsContent value="See all" className="mt-5">
-                        <div className="flex flex-col gap-6">xd</div>
+                        <div className="flex flex-col gap-6">
+                            <SeeAllMetrics />
+                        </div>
                     </TabsContent>
                 </Tabs>
             </main>

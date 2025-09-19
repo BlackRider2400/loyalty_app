@@ -35,25 +35,25 @@ const DailyMetrics = () => {
                 </TabsList>
 
                 <TabsContent value="Mon" className={TabContentClassname}>
-                    <DailyChart />
+                    <DailyChart day="Monday" />
                 </TabsContent>
                 <TabsContent value="Tue" className={TabContentClassname}>
-                    Make changes to your account here.
+                    <DailyChart day="Tuesday" />
                 </TabsContent>
                 <TabsContent value="Wed" className={TabContentClassname}>
-                    Make changes to your account here.
+                    <DailyChart day="Wednesday" />
                 </TabsContent>
                 <TabsContent value="Thu" className={TabContentClassname}>
-                    Make changes to your account here.
+                    <DailyChart day="Thursday" />
                 </TabsContent>
                 <TabsContent value="Fri" className={TabContentClassname}>
-                    Make changes to your account here.
+                    <DailyChart day="Friday" />
                 </TabsContent>
                 <TabsContent value="Sat" className={TabContentClassname}>
-                    Make changes to your account here.
+                    <DailyChart day="Saturday" />
                 </TabsContent>
                 <TabsContent value="Sun" className={TabContentClassname}>
-                    Make changes to your account here.
+                    <DailyChart day="Sunday" />
                 </TabsContent>
             </Tabs>
         </div>

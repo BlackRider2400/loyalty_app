@@ -91,7 +91,7 @@ const TermsAndPrivacyPage = () => {
                     label="Terms and Conditions (EN)"
                     title="Terms and Conditions (EN)"
                     pdfHref="/files/RallyUpGo_Terms_EN_NL.pdf"
-                    pdfLabel="Download PDF (EN)"
+                    pdfLabel="Download PDF (EN & NL)"
                     content={
                         <ol className="list-decimal pl-5 space-y-2">
                             <li>
@@ -129,7 +129,7 @@ const TermsAndPrivacyPage = () => {
                     label="Privacy Policy (EN)"
                     title="Privacy Policy (EN)"
                     pdfHref="/files/RallyUpGo_Privacy_EN_NL.pdf"
-                    pdfLabel="Download PDF (EN)"
+                    pdfLabel="Download PDF (EN) & (NL)"
                     content={
                         <>
                             <p>

@@ -16,6 +16,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
@@ -25,6 +26,9 @@ const FormSchema = z.object({
     password: z
         .string()
         .min(6, { message: "Password must be at least 6 characters." }),
+    acceptTerms: z.boolean().refine((v) => v, {
+        message: "You must accept the terms and conditions.",
+    }),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -39,6 +43,7 @@ export function SignUpForm() {
             username: "",
             email: "",
             password: "",
+            acceptTerms: false,
         },
     });
 
@@ -48,23 +53,26 @@ export function SignUpForm() {
             const res = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
+                body: JSON.stringify({
+                    username: values.username, // mapped to "name" in the route
+                    email: values.email,
+                    password: values.password,
+                }),
             });
 
-            const contentType = res.headers.get("content-type") || "";
-            const payload = contentType.includes("application/json")
+            const ct = res.headers.get("content-type") || "";
+            const payload = ct.includes("application/json")
                 ? await res.json()
                 : await res.text();
 
             if (res.status === 201) {
-                toast.success(
+                const msg =
                     typeof payload === "string"
                         ? payload
-                        : payload?.message || "User registered successfully."
-                );
-
-                router.push("/acc-activation");
-
+                        : payload?.message || "User registered successfully.";
+                toast.success(msg);
+                // If you need server components to read fresh state, you can also call router.refresh()
+                router.push("/activate-account");
                 return;
             }
 
@@ -161,9 +169,46 @@ export function SignUpForm() {
                         )}
                     />
 
+                    <FormField
+                        control={form.control}
+                        name="acceptTerms"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center gap-2">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={(checked) =>
+                                            field.onChange(!!checked)
+                                        }
+                                    />
+                                </FormControl>
+
+                                <div className="space-y-1 leading-none">
+                                    <FormLabel className="text-sm font-normal !text-white">
+                                        I agree to the{" "}
+                                        <Link
+                                            href="/files/RallyUpGo_Terms_EN_NL.pdf"
+                                            className="underline"
+                                        >
+                                            Terms & Conditions
+                                        </Link>{" "}
+                                        and{" "}
+                                        <Link
+                                            href="/files/RallyUpGo_Privacy_EN_NL.pdf"
+                                            className="underline"
+                                        >
+                                            Privacy Policy
+                                        </Link>
+                                    </FormLabel>
+                                    <FormMessage />
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+
                     <Button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !form.watch("acceptTerms")}
                         aria-busy={isSubmitting}
                         className="w-full mt-2 rounded-[16px] bg-light-blue text-[16px] font-bold py-6 hover:bg-primary-orange disabled:opacity-60"
                     >
@@ -171,6 +216,7 @@ export function SignUpForm() {
                     </Button>
                 </form>
             </Form>
+
             <div className="mt-7 pl-2">
                 <p className="text-white italic flex flex-col">
                     Already have an account?{" "}

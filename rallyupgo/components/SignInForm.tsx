@@ -18,14 +18,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { useState } from "react";
 
 const FormSchema = z.object({
     password: z.string(),
-    email: z.string().email({ message: "Invalid email address." }),
+    email: z.email({ message: "Invalid email address." }),
 });
 
 export function SignInForm() {
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -36,32 +38,39 @@ export function SignInForm() {
         mode: "onSubmit",
     });
 
-    // Wywołanie lokalnego API: /app/api/auth/login/route.ts (proxy do backendu)
     async function onSubmit(values: z.infer<typeof FormSchema>) {
+        setIsSubmitting(true);
         try {
             const res = await fetch("/api/auth/login", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
-                credentials: "include", // odbiór/set Cookie (HttpOnly) z odpowiedzi
+                credentials: "include",
                 body: JSON.stringify(values),
             });
 
-            // Spróbuj odczytać JSON (jeśli jest)
-            const contentType = res.headers.get("content-type") || "";
-            const data = contentType.includes("application/json")
-                ? await res.json()
-                : null;
+            console.log("Login response:", res);
+
+            type LoginResponse = {
+                authenticated?: boolean;
+                email?: string;
+                roles?: string[];
+                error?: string;
+            };
+            let data: LoginResponse | null = null;
+            try {
+                data = await res.json();
+            } catch {}
+            console.log("Login response data:", data?.authenticated, data);
 
             if (!res.ok) {
-                // Mapowanie 401 z backendu
                 const msg =
                     data?.error ||
                     (res.status === 401
                         ? "Unauthorized - Invalid credentials"
                         : "Login failed. Try again.");
-                // pokaż błąd przy polach + toast
-                form.setError("email", { message: undefined });
-                form.setError("password", { message: undefined });
+
+                // show field errors for 401
+                form.clearErrors();
                 if (res.status === 401) {
                     form.setError("email", {
                         message: "Invalid email or password.",
@@ -70,11 +79,11 @@ export function SignInForm() {
                         message: "Invalid email or password.",
                     });
                 }
+
                 toast.error(msg);
                 return;
             }
 
-            // Sukces — API route ustawi ciasteczka HttpOnly: access_token / refresh_token
             if (data?.authenticated) {
                 toast.success("Welcome back!", {
                     description: data?.email
@@ -85,7 +94,6 @@ export function SignInForm() {
                 toast.success("Signed in.");
             }
 
-            // (Opcjonalnie) przekierowanie po zalogowaniu:
             router.replace("/u");
         } catch (err) {
             const message =
@@ -93,10 +101,10 @@ export function SignInForm() {
                     ? err.message
                     : "Unexpected error during login.";
             toast.error("Network error", { description: message });
+        } finally {
+            setIsSubmitting(false);
         }
     }
-
-    const isSubmitting = form.formState.isSubmitting;
 
     return (
         <>
@@ -164,6 +172,14 @@ export function SignInForm() {
                     >
                         {isSubmitting ? "Signing in..." : "Sign In"}
                     </Button>
+
+                    <Link
+                        href="/reset-password"
+                        className="mt-3 px-2 text-[16px] font-semibold hover:text-primary-orange text-light-blue underline italic"
+                        aria-label="Go to reset password page"
+                    >
+                        Forgot password?
+                    </Link>
                 </form>
             </Form>
 

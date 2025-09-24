@@ -1,54 +1,60 @@
 import { NextRequest, NextResponse } from "next/server";
+import { proxyJson } from "@/lib/serverApi";
 
 export async function POST(req: NextRequest) {
     try {
-        const base = process.env.AUTH_API_BASE;
-        if (!base) {
-            return NextResponse.json(
-                { error: "Server misconfigured: AUTH_API_BASE is missing." },
-                { status: 500 }
-            );
-        }
-        const { username, email, password } = await req.json();
+        const raw = await req.json();
+
+        const username = raw?.username;
+        const email = raw?.email;
+        const password = raw?.password;
 
         if (!username || !email || !password) {
             return NextResponse.json(
-                { error: "Missing required fields." },
+                { error: "Missing username, email, or password." },
                 { status: 400 }
             );
         }
 
-        const res = await fetch(`${base}/auth/register`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                // Swagger sugeruje Accept: */*, ale fetch i tak to wysyła.
-                Accept: "*/*",
-            },
-            body: JSON.stringify({
-                name: username,
-                email,
-                password,
-            }),
-        });
+        const backendPayload = { name: username, email, password };
 
-        // Backend może zwracać JSON albo czysty tekst — obsłużmy obie opcje:
-        const contentType = res.headers.get("content-type") || "";
-        const raw = contentType.includes("application/json")
-            ? await res.json()
-            : await res.text();
+        const message = await proxyJson<string>(
+            "/auth/register",
+            { method: "POST", body: JSON.stringify(backendPayload) },
+            false
+        );
 
-        // Zwróć dokładnie ten sam status co backend (201 przy sukcesie, 409 przy konflikcie itd.)
-        if (typeof raw === "string") {
-            return NextResponse.json({ message: raw }, { status: res.status });
-        } else {
-            return NextResponse.json(raw, { status: res.status });
-        }
-    } catch (err) {
-        console.error("Registration proxy error:", err);
         return NextResponse.json(
-            { error: "Registration proxy error." },
-            { status: 502 }
+            { registered: true, message },
+            { status: 201 }
+        );
+    } catch (e) {
+        const error = e as { body?: string; status?: number };
+
+        if (error?.status) {
+            if (error.status === 409) {
+                const msg =
+                    typeof error.body === "string"
+                        ? error.body
+                        : "Email already in use.";
+                return NextResponse.json({ error: msg }, { status: 409 });
+            }
+
+            if (typeof error.body === "string") {
+                return new NextResponse(error.body, {
+                    status: error.status,
+                    headers: { "Content-Type": "text/plain" },
+                });
+            }
+            return NextResponse.json(
+                { error: "Registration failed" },
+                { status: error.status }
+            );
+        }
+
+        return NextResponse.json(
+            { error: "Registration failed" },
+            { status: 500 }
         );
     }
 }

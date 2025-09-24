@@ -105,7 +105,7 @@ const ClubCouponsPage = () => {
                     </TabsList>
 
                     <Link href={ROUTES.CLUB_ADD_COUPON}>
-                        <Button className="bg-primary-orange hover:bg-light-blue text-white text-[18px] font-semibold rounded-2xl h-12 w-full mt-4">
+                        <Button className="bg-primary-orange hover:bg-light-blue text-white text-[18px] font-semibold rounded-2xl h-12 w-full mt-4 cursor-pointer">
                             Add New Coupon +
                         </Button>
                     </Link>

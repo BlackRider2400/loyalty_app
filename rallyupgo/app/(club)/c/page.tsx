@@ -16,7 +16,7 @@ const ClubHome = () => {
             description: "Half-price coffee at reception.",
             imgUrl: "/images/coffee.jpg",
             priceCoins: 150,
-            code: "COF50-7KQ8",
+            // code: "COF50-7KQ8",
             enabled: true,
         },
         {
@@ -26,7 +26,7 @@ const ClubHome = () => {
             description: "20% off next court rental.",
             imgUrl: "/images/coffee.jpg",
             priceCoins: 400,
-            code: "COF50-7KQ8",
+            // code: "COF50-7KQ8",
             enabled: true,
         },
         {
@@ -36,7 +36,7 @@ const ClubHome = () => {
             description: "Grab one free protein bar.",
             imgUrl: "/images/coffee.jpg",
             priceCoins: 250,
-            code: "COF50-7KQ8",
+            // code: "COF50-7KQ8",
             enabled: true,
         },
     ];
@@ -106,7 +106,7 @@ const ClubHome = () => {
                         </Link>
                     </div>
                     <Link href={ROUTES.CLUB_ADD_COUPON}>
-                        <Button className="bg-primary-orange hover:bg-light-blue text-white text-[18px] font-semibold rounded-2xl h-10 w-full mb-4">
+                        <Button className="bg-primary-orange hover:bg-light-blue text-white text-[18px] font-semibold rounded-2xl h-10 w-full mb-4 cursor-pointer">
                             Add New Coupon +
                         </Button>
                     </Link>

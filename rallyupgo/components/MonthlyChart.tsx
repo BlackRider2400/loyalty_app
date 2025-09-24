@@ -161,7 +161,6 @@ const chartData = [
 const chartConfig = {
     scans: {
         label: "Scans",
-        // works with shadcn/ui <ChartContainer/> CSS variables
         color: "hsl(var(--chart-1))",
     },
 } satisfies ChartConfig;

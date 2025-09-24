@@ -1,8 +1,11 @@
+// app/u/settings/page.tsx
+"use client";
+
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import Link from "next/link";
-
 import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import {
     AlertDialog,
@@ -24,6 +27,8 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
+import { toast } from "sonner"; // or your toast lib
+
 const Tile = ({
     imgUrl,
     alt,
@@ -34,15 +39,9 @@ const Tile = ({
     text: string;
 }) => {
     return (
-        <div className=" border-t-1 py-4 px-1 flex items-center justify-between">
+        <div className="border-t-1 py-4 px-1 flex items-center justify-between">
             <div className="flex-center gap-[10px]">
-                <Image
-                    src={imgUrl}
-                    alt={alt}
-                    width={24}
-                    height={24}
-                    className=""
-                />
+                <Image src={imgUrl} alt={alt} width={24} height={24} />
                 <p className="text-white text-[16px]">{text}</p>
             </div>
             <Image
@@ -57,6 +56,28 @@ const Tile = ({
 };
 
 const Settings = () => {
+    const router = useRouter();
+    const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+
+    async function handleLogout() {
+        if (isLoggingOut) return;
+        setIsLoggingOut(true);
+        try {
+            const res = await fetch("/api/auth/logout", {
+                method: "POST",
+                credentials: "include",
+            });
+            if (!res.ok) throw new Error("Logout failed");
+            toast?.success?.("Logged out");
+        } catch (e) {
+            toast?.info?.("Session cleared");
+        } finally {
+            router.replace("/");
+            router.refresh();
+            setIsLoggingOut(false);
+        }
+    }
+
     return (
         <div className="flex flex-col min-h-screen">
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center px-3">
@@ -162,8 +183,12 @@ const Settings = () => {
                             <AlertDialogCancel className="flex-1">
                                 Cancel
                             </AlertDialogCancel>
-                            <AlertDialogAction className="flex-1 bg-primary-blue hover:bg-primary-orange">
-                                Continue
+                            <AlertDialogAction
+                                className="flex-1 bg-primary-blue hover:bg-primary-orange disabled:opacity-50"
+                                onClick={handleLogout}
+                                disabled={isLoggingOut}
+                            >
+                                {isLoggingOut ? "Logging out..." : "Continue"}
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

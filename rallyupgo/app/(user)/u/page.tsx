@@ -33,7 +33,7 @@ const UserPage = () => {
             title: "Abc -50%",
             location: "Frans Otten Station",
             description: "Half-price coffee at reception.",
-            imgUrl: "/images/coffee.jpg",
+            imgUrl: "https://mylovelyserver.fun:8443/rally-up-go/uploads/1758239054578_test_image.jpeg",
             priceCoins: 150,
             code: "COF50-7KQ8",
             enabled: true,

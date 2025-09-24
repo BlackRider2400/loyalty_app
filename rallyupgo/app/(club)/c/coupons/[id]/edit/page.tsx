@@ -18,6 +18,18 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -255,18 +267,9 @@ const EditCouponPage = () => {
         <div className="min-h-screen flex flex-col bg-primary-blue">
             {/* Header */}
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center justify-between px-3">
-                <Link href={ROUTES.CLUB_COUPONS || "/c/coupons"}>
-                    <Image
-                        src="/icons/arrow.svg"
-                        alt="Back"
-                        width={24}
-                        height={24}
-                    />
-                </Link>
-                <h1 className="text-[20px] font-semibold text-white">
+                <h1 className="text-[20px] font-semibold text-white mx-auto">
                     Edit Coupon
                 </h1>
-                <span className="w-6 h-6" />
             </section>
             {/* Form */}
             <main className="flex-1 overflow-y-auto p-4 pb-10">
@@ -441,6 +444,32 @@ const EditCouponPage = () => {
                             >
                                 {submitting ? "Saving…" : "Save changes"}
                             </Button>
+                        </div>
+                        <div className="w-full">
+                            <AlertDialog>
+                                <AlertDialogTrigger className="w-full flex-center justify-center h-12 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-semibold">
+                                    Delete
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                            Delete this coupon?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This action cannot be undone.
+                                            <br />
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter className="flex-center gap-2 flex-row">
+                                        <AlertDialogCancel className="flex-1">
+                                            Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction className="flex-1 bg-red-600 hover:bg-red-700 text-white">
+                                            Delete
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </form>
                 </Form>

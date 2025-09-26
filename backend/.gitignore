@@ -130,3 +130,5 @@ npm-debug.log
 yarn-error.log
 .pnp/
 .pnp.js
+
+src/main/resources/application.properties

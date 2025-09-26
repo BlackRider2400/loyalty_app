@@ -139,7 +139,7 @@ public class AuthController {
         user.setEmail(registrationRequest.email());
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
         user.setEnabled(false);
-        user.setRoles(Set.of("USER"));
+        user.setRoles(Set.of("CLIENT_USER"));
         user.setBalance(0);
         user.setRegisteredAt(LocalDateTime.now());
 

@@ -1,11 +1,10 @@
 package com.rally.up.go.model;
 
 
+import com.rally.up.go.security.UserRole;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class ShopUser extends User {
     private List<Product> products;
 
     public ShopUser(String username, String password, String email, boolean enabled, LocalDateTime registeredAt, String shopName) {
-        super(null, username, password, email, enabled, registeredAt, Set.of("SHOP")); // id = null
+        super(null, username, password, email, enabled, registeredAt, Set.of(UserRole.SHOP));
         this.shopName = shopName;
     }
 

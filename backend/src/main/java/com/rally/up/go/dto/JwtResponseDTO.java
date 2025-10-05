@@ -1,5 +1,7 @@
 package com.rally.up.go.dto;
 
+import com.rally.up.go.security.UserRole;
+
 import java.util.Set;
 
 public record JwtResponseDTO(
@@ -7,9 +9,9 @@ public record JwtResponseDTO(
         String type,
         String email,
         String refreshToken,
-        Set<String> roles
+        Set<UserRole> roles
 ) {
-    public JwtResponseDTO(String token, String email, String refreshToken, Set<String> roles) {
+    public JwtResponseDTO(String token, String email, String refreshToken, Set<UserRole> roles) {
         this("Bearer", token, email, refreshToken, roles);
     }
 }

@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         // All other requests require authentication
-                        .requestMatchers("/api/client/**").hasAuthority("CLIENT")
+                        .requestMatchers("/api/client/**").hasAuthority("CLIENT_USER")
                         .requestMatchers("/api/shop/**").hasAuthority("SHOP")
                         .anyRequest().authenticated()
                 )

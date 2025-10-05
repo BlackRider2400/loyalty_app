@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -15,11 +17,11 @@ import java.util.List;
 @DiscriminatorValue("Client")
 public class ClientUser extends User {
 
-    private int balance;
-
-
     @OneToMany(mappedBy = "clientUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Coupon> couponList;
+
+    @OneToMany(mappedBy = "clientUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserShopBalance> shopBalances = new HashSet<>();
 
     public ClientUser() {
         couponList = new ArrayList<>();

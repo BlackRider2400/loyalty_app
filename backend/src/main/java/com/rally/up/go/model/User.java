@@ -1,6 +1,7 @@
 package com.rally.up.go.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rally.up.go.security.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,5 +40,6 @@ public abstract class User {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
-    private Set<String> roles;
+    @Enumerated(EnumType.STRING)
+    private Set<UserRole> roles;
 }

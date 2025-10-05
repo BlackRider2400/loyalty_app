@@ -9,6 +9,7 @@ import com.rally.up.go.model.*;
 import com.rally.up.go.repository.QrCodeRepository;
 import com.rally.up.go.repository.UserRepository;
 import com.rally.up.go.security.JwtUtil;
+import com.rally.up.go.security.UserRole;
 import com.rally.up.go.service.AuthTokenService;
 import com.rally.up.go.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -139,7 +140,7 @@ public class AuthController {
         user.setEmail(registrationRequest.email());
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
         user.setEnabled(false);
-        user.setRoles(Set.of("CLIENT_USER"));
+        user.setRoles(Set.of(UserRole.CLIENT_USER));
         user.setBalance(0);
         user.setRegisteredAt(LocalDateTime.now());
 
@@ -174,7 +175,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
         user.setEnabled(false);
         user.setRegisteredAt(LocalDateTime.now());
-        user.setRoles(Set.of("SHOP"));
+        user.setRoles(Set.of(UserRole.SHOP));
 
 
         userRepository.save(user);

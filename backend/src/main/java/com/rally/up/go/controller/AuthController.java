@@ -141,7 +141,6 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(registrationRequest.password()));
         user.setEnabled(false);
         user.setRoles(Set.of(UserRole.CLIENT_USER));
-        user.setBalance(0);
         user.setRegisteredAt(LocalDateTime.now());
 
         QrCode qrCode = new QrCode();

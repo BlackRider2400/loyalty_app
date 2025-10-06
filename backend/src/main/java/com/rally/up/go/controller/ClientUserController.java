@@ -75,6 +75,16 @@ public class ClientUserController {
         return ResponseEntity.notFound().build();
     }
 
+    // select shop
+    @PostMapping("/select-shop")
+    public ResponseEntity<String> selectShop(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Long shopId) {
+        ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
+        clientUser.setCurrentShop(shopUserRepository.findById(shopId)
+                .orElseThrow(() -> new IllegalArgumentException("Shop not found")));
+        return ResponseEntity.ok().build();
+    }
+
     // get all shops
     @GetMapping("/shops")
     public ResponseEntity<List<ShopUserDTO>> getAllShops() {
@@ -88,11 +98,11 @@ public class ClientUserController {
     // get all products for a shop
 
     @GetMapping("/products")
-    public ResponseEntity<List<ProductResponseDTO>> getProductsForShop(@RequestParam Long shopId) {
-        ShopUser shopUser = shopUserRepository.findById(shopId)
-                .orElseThrow(() -> new IllegalArgumentException("Shop not found"));
+    public ResponseEntity<List<ProductResponseDTO>> getProductsForShop(@AuthenticationPrincipal UserDetails userDetails) {
+        ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
 
-        List<Product> productList = shopUser.getProducts();
+        List<Product> productList = clientUser.getCurrentShop().getProducts();
 
         return ResponseEntity.ok(productList.stream()
                 .map(product -> productMapper.toDto(product)).toList());

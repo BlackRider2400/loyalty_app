@@ -8,6 +8,7 @@ public record ClientUserDTO(
         String email,
         String qrCode,
         int balance,
+        ShopUserDTO currentShopUserDTO,
         List<CouponDTO> couponDTOList
 ) {
 }

@@ -12,6 +12,9 @@ public class ClientUserMapper {
     @Autowired
     private CouponMapper couponMapper;
 
+    @Autowired
+    private ShopUserMapper shopUserMapper;
+
     public ClientUserDTO toDto(ClientUser clientUser) {
         return new ClientUserDTO(
                 clientUser.getId(),
@@ -19,6 +22,7 @@ public class ClientUserMapper {
                 clientUser.getEmail(),
                 clientUser.getQrCode().getUuid(),
                 clientUser.getBalance(),
+                clientUser.getCurrentShop() == null ? null : shopUserMapper.toDto(clientUser.getCurrentShop()),
                 clientUser.getCouponList().stream().map(coupon -> couponMapper.toDto(coupon)).toList()
         );
     }

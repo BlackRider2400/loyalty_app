@@ -52,7 +52,11 @@ public class ShopController {
 
 
     @PostMapping("/add-credits")
-    public ResponseEntity<String> addCreditsToUser(@RequestBody QrCodeCreditsDTO qrCodeCreditsDTO) {
+    public ResponseEntity<String> addCreditsToUser(@AuthenticationPrincipal UserDetails userDetails,
+                                                   @RequestBody QrCodeCreditsDTO qrCodeCreditsDTO) {
+
+        ShopUser shopUser = shopUserRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
 
         if(qrCodeCreditsDTO.credits() < 0){
             throw new IllegalArgumentException("Credits can not be less than 0.");
@@ -61,8 +65,10 @@ public class ShopController {
         QrCode qrCode = qrCodeRepository.findByUuid(qrCodeCreditsDTO.uuid())
                 .orElseThrow(() -> new UuidNotFoundException(qrCodeCreditsDTO.uuid()));
 
-
+        qrCode.getClientUser().setCurrentShop(shopUser);
         qrCode.getClientUser().addBalance(qrCodeCreditsDTO.credits());
+
+        qrCodeRepository.save(qrCode);
 
         return ResponseEntity.ok("Added " + qrCodeCreditsDTO.credits() + " credits to your account.");
     }

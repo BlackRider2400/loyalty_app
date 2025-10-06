@@ -69,9 +69,11 @@ public class ProductController {
 
     // READ
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(
-                productRepository.findAll().stream()
+                shopUserRepository.findByEmail(userDetails.getUsername())
+                        .orElseThrow(() -> new UsernameNotFoundException(userDetails.getUsername()))
+                        .getProducts().stream()
                         .map(productMapper::toDto)
                         .toList()
         );

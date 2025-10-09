@@ -29,6 +29,9 @@ public class AuthTokenService {
     @Value("${app.baseUrl}")
     private String baseUrl;
 
+    @Value("${server.servlet.context-path}")
+    private String addToUrl;
+
     @Value("${verification.expiration}")
     private long expirationTime;
 
@@ -37,7 +40,7 @@ public class AuthTokenService {
         VerificationToken verificationToken = new VerificationToken(user, token, expirationTime);
         verificationTokenRepository.save(verificationToken);
 
-        String url = baseUrl + "/auth/activate-account?token=" + token;
+        String url = baseUrl + addToUrl + "/auth/activate-account?token=" + token;
         String emailText = "Thank you for registering! Please click the link to activate your account: " + url;
         emailService.sendEmail(user.getEmail(), "Account Activation", emailText);
     }
@@ -64,7 +67,7 @@ public class AuthTokenService {
         VerificationToken passwordResetToken = new VerificationToken(user, token, expirationTime);
         verificationTokenRepository.save(passwordResetToken);
 
-        String url = baseUrl + "/auth/reset-password?token=" + token;
+        String url = baseUrl + addToUrl + "/auth/reset-password?token=" + token;
         String emailText = "To reset your password, please click the link: " + url;
         emailService.sendEmail(user.getEmail(), "Password Reset", emailText);
     }

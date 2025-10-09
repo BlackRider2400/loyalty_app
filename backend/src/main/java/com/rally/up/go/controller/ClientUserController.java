@@ -19,6 +19,11 @@ import com.rally.up.go.repository.ClientUserRepository;
 import com.rally.up.go.repository.CouponRepository;
 import com.rally.up.go.repository.ProductRepository;
 import com.rally.up.go.repository.ShopUserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Tag(name = "Client", description = "Operations related to the Client User profile, shops, and coupons.")
 @RestController
 @RequestMapping("/api/client")
 public class ClientUserController {
@@ -63,7 +69,16 @@ public class ClientUserController {
     private CouponMapper couponMapper;
 
 
-
+    @Operation(
+            summary = "Get current authenticated client user details",
+            description = "Retrieves the profile information for the currently authenticated client.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Client profile successfully retrieved.",
+                            content = @Content(schema = @Schema(implementation = ClientUserDTO.class))),
+                    @ApiResponse(responseCode = "404", description = "User not found."),
+                    @ApiResponse(responseCode = "403", description = "Forbidden (user not authenticated).")
+            }
+    )
     @GetMapping("/me")
     public ResponseEntity<ClientUserDTO> me(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
@@ -75,7 +90,15 @@ public class ClientUserController {
         return ResponseEntity.notFound().build();
     }
 
-    // select shop
+    @Operation(
+            summary = "Select a current shop",
+            description = "Sets the specified shop as the client's currently selected shop for balance and product operations.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Shop successfully selected."),
+                    @ApiResponse(responseCode = "400", description = "Invalid shop ID or shop not found."),
+                    @ApiResponse(responseCode = "404", description = "Authenticated client not found.")
+            }
+    )
     @PostMapping("/select-shop")
     public ResponseEntity<String> selectShop(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Long shopId) {
         ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
@@ -85,7 +108,14 @@ public class ClientUserController {
         return ResponseEntity.ok().build();
     }
 
-    // get all shops
+    @Operation(
+            summary = "Get all registered shops",
+            description = "Retrieves a list of all available shops in the system.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of shops successfully retrieved.",
+                            content = @Content(schema = @Schema(implementation = ShopUserDTO.class)))
+            }
+    )
     @GetMapping("/shops")
     public ResponseEntity<List<ShopUserDTO>> getAllShops() {
 
@@ -95,8 +125,16 @@ public class ClientUserController {
                 .body(shopUserRepository.findAll().stream()
                         .map(shopUser -> shopUserMapper.toDto(shopUser)).collect(Collectors.toList()));
     }
-    // get all products for a shop
 
+    @Operation(
+            summary = "Get products from the currently selected shop",
+            description = "Retrieves the list of products offered by the client's currently selected shop (set via `/select-shop`).",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Products successfully retrieved."),
+                    @ApiResponse(responseCode = "404", description = "Client or current shop not found."),
+                    @ApiResponse(responseCode = "400", description = "Shop not selected (CurrentShop is null).")
+            }
+    )
     @GetMapping("/products")
     public ResponseEntity<List<ProductResponseDTO>> getProductsForShop(@AuthenticationPrincipal UserDetails userDetails) {
         ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
@@ -108,7 +146,16 @@ public class ClientUserController {
                 .map(product -> productMapper.toDto(product)).toList());
     }
 
-    // create coupon
+    @Operation(
+            summary = "Create or retrieve a coupon for a product",
+            description = "Creates a new coupon for a product at the current shop if the client has sufficient balance. If an unused coupon for this product already exists, it is returned instead of creating a new one.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Coupon successfully created or retrieved.",
+                            content = @Content(schema = @Schema(implementation = CouponDTO.class))),
+                    @ApiResponse(responseCode = "404", description = "Client or Product not found."),
+                    @ApiResponse(responseCode = "402", description = "Not enough balance to acquire the coupon.")
+            }
+    )
     @GetMapping("/coupon")
     public ResponseEntity<CouponDTO> createCoupon(
             @RequestParam Long productId,

@@ -21,7 +21,8 @@ public class ClientUser extends User {
     @OneToMany(mappedBy = "clientUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserShopBalance> shopBalances = new HashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "clientUser")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "current_shop_id")
     private ShopUser currentShop;
 
     public ClientUser() {

@@ -1,7 +1,13 @@
 export const ROUTES = {
+    HOME: "/",
+
+    SIGNIN: "/sign-in",
+    SIGNUP: "/sign-up",
+
     USER_HOME: "/u",
     USER_QR_CODE: "/u/qrcode",
     USER_COUPONS: "/u/coupons",
+    USER_PROFILE: "/u/profile",
     USER_SETTINGS: "/u/settings",
 
     CLUB_HOME: "/c",

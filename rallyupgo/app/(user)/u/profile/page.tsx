@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { proxyJsonReadOnly } from "@/lib/serverApi";
+import { ClientUserDTO } from "@/lib/types";
 
 const ReadonlyRow = ({
     label,
@@ -26,12 +28,23 @@ const ReadonlyRow = ({
     </div>
 );
 
-const ProfilePage = () => {
-    const user = {
-        username: "twojaStara69",
-        email: "twojaStara69@gmail.com",
-        phone: "+48 123 456 789",
-    };
+const ProfilePage = async () => {
+    let user: { email?: string; username?: string } = {};
+    try {
+        const me = await proxyJsonReadOnly<ClientUserDTO>("/api/client/me", {
+            cache: "no-store",
+        });
+        user = { email: me.email, username: me.username };
+    } catch (err) {
+        const error = err as { body?: string; status?: number };
+        const status = Number(error?.status) || 500;
+
+        return (
+            <div>
+                Error: {status}, {error?.body}
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -51,10 +64,11 @@ const ProfilePage = () => {
             </section>
 
             <section className="flex-1 bg-primary-blue p-4 py-8 space-y-5">
-                <ReadonlyRow label="Username" value={user.username} />
-                <ReadonlyRow label="Email" value={user.email} />
-
-                <ReadonlyRow label="Phone" value={user.phone} />
+                <ReadonlyRow
+                    label="Username"
+                    value={user.username || "Unknown"}
+                />
+                <ReadonlyRow label="Email" value={user?.email || "Unknown"} />
             </section>
 
             <Footer />

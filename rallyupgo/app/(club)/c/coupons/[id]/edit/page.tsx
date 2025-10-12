@@ -40,7 +40,6 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
-// --- (1) Typy / schema -------------------------------------------------------
 export type Coupon = {
     id: string;
     location: string;
@@ -72,8 +71,6 @@ const couponSchema = z.object({
 
 type CouponFormInput = z.input<typeof couponSchema>;
 type CouponFormValues = z.output<typeof couponSchema>;
-
-// --- (2) Mini-uploader (drag & drop + podgląd) -------------------------------
 
 function CoverUploader({
     file,
@@ -137,7 +134,6 @@ function CoverUploader({
                 <input {...getInputProps()} />
                 {preview ? (
                     <>
-                        {/* Use a plain <img> for blob: preview to avoid Next/Image constraints */}
                         <Image
                             src={preview}
                             alt="Cover preview"
@@ -174,7 +170,6 @@ function CoverUploader({
     );
 }
 
-// --- (3) Strona edycji -------------------------------------------------------
 const EditCouponPage = () => {
     const router = useRouter();
     const { id } = useParams<{ id: string }>();
@@ -186,7 +181,7 @@ const EditCouponPage = () => {
             location: "Main club",
             title: "Abc -50%",
             description: "Half-price coffee at reception.",
-            imgUrl: "/images/coffee.jpg", // just backend info; not used in form
+            imgUrl: "/images/coffee.jpg",
             priceCoins: 150,
             code: "COF50-7KQ8",
             enabled: true,
@@ -200,7 +195,6 @@ const EditCouponPage = () => {
             description: "",
             priceCoins: 0,
             enabled: true,
-            // file is required, user must pick it
         },
         mode: "onChange",
     });
@@ -212,7 +206,6 @@ const EditCouponPage = () => {
                 description: initial.description,
                 priceCoins: initial.priceCoins,
                 enabled: initial.enabled,
-                // do NOT prefill file
             });
         }
     }, [initial, form]);
@@ -227,10 +220,7 @@ const EditCouponPage = () => {
             fd.append("description", values.description);
             fd.append("priceCoins", String(values.priceCoins));
             fd.append("enabled", String(values.enabled));
-            fd.append("file", values.file); // the actual image picked
-
-            // example PUT; adjust to your API
-            // await fetch(`/api/coupons/${id}`, { method: "PUT", body: fd });
+            fd.append("file", values.file);
 
             toast.success("Coupon updated successfully!");
             router.push(ROUTES.CLUB_COUPONS || "/c/coupons");
@@ -265,20 +255,18 @@ const EditCouponPage = () => {
     }
     return (
         <div className="min-h-screen flex flex-col bg-primary-blue">
-            {/* Header */}
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center justify-between px-3">
                 <h1 className="text-[20px] font-semibold text-white mx-auto">
                     Edit Coupon
                 </h1>
             </section>
-            {/* Form */}
+
             <main className="flex-1 overflow-y-auto p-4 pb-10">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-6 text-white"
                     >
-                        {/* Cover */}
                         <FormField
                             control={form.control}
                             name="file"
@@ -303,7 +291,6 @@ const EditCouponPage = () => {
                             )}
                         />
 
-                        {/* Title */}
                         <FormField
                             control={form.control}
                             name="title"
@@ -324,7 +311,6 @@ const EditCouponPage = () => {
                             )}
                         />
 
-                        {/* Description */}
                         <FormField
                             control={form.control}
                             name="description"
@@ -346,7 +332,6 @@ const EditCouponPage = () => {
                             )}
                         />
 
-                        {/* Price */}
                         <FormField
                             control={form.control}
                             name="priceCoins"
@@ -367,7 +352,6 @@ const EditCouponPage = () => {
                                                 name={name}
                                                 ref={ref}
                                                 onBlur={onBlur}
-                                                // pozwala skasować pole do pustego stringa bez krzyczenia TS
                                                 value={
                                                     value === undefined ||
                                                     value === null ||
@@ -406,7 +390,6 @@ const EditCouponPage = () => {
                             }}
                         />
 
-                        {/* Enabled switch */}
                         <FormField
                             control={form.control}
                             name="enabled"
@@ -426,7 +409,6 @@ const EditCouponPage = () => {
                             )}
                         />
 
-                        {/* Actions */}
                         <div className="grid grid-cols-2 gap-3 pt-2">
                             <Link href={ROUTES.CLUB_COUPONS || "/c/coupons"}>
                                 <Button

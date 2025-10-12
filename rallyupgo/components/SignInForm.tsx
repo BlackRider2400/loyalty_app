@@ -69,7 +69,6 @@ export function SignInForm() {
                         ? "Unauthorized - Invalid credentials"
                         : "Login failed. Try again.");
 
-                // show field errors for 401
                 form.clearErrors();
                 if (res.status === 401) {
                     form.setError("email", {

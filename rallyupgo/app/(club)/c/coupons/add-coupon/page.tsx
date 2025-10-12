@@ -28,7 +28,6 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
-// --- (1) Schema --------------------------------------------------------------
 const couponSchema = z.object({
     title: z.string().min(2, "Title is too short").max(60),
     description: z.string().min(5, "Description is too short").max(240),
@@ -50,7 +49,6 @@ const couponSchema = z.object({
 type CouponFormInput = z.input<typeof couponSchema>;
 type CouponFormValues = z.output<typeof couponSchema>;
 
-// --- (2) Mini-uploader (drag & drop + preview) -------------------------------
 function CoverUploader({
     file,
     onFile,
@@ -149,7 +147,6 @@ function CoverUploader({
     );
 }
 
-// --- (3) /add-coupon page (CREATE) -------------------------------------------
 const AddCouponPage = () => {
     const router = useRouter();
     const [submitting, setSubmitting] = useState(false);
@@ -161,7 +158,6 @@ const AddCouponPage = () => {
             description: "",
             priceCoins: 0,
             enabled: true,
-            // file is required; user must pick it
         },
         mode: "onChange",
     });
@@ -176,9 +172,6 @@ const AddCouponPage = () => {
             fd.append("enabled", String(values.enabled));
             fd.append("file", values.file);
 
-            // Example POST; adjust to your API contract as needed:
-            // await fetch(`/api/coupons`, { method: "POST", body: fd });
-
             toast.success("Coupon created successfully!");
             router.push(ROUTES.CLUB_COUPONS || "/c/coupons");
         } catch (e) {
@@ -191,7 +184,6 @@ const AddCouponPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-primary-blue">
-            {/* Header */}
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center justify-between px-3">
                 <Link href={ROUTES.CLUB_COUPONS || "/c/coupons"}>
                     <Image
@@ -207,14 +199,12 @@ const AddCouponPage = () => {
                 <span className="w-6 h-6" />
             </section>
 
-            {/* Form */}
             <main className="flex-1 overflow-y-auto p-4 pb-10">
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-6 text-white"
                     >
-                        {/* Cover */}
                         <FormField
                             control={form.control}
                             name="file"
@@ -239,7 +229,6 @@ const AddCouponPage = () => {
                             )}
                         />
 
-                        {/* Title */}
                         <FormField
                             control={form.control}
                             name="title"
@@ -260,7 +249,6 @@ const AddCouponPage = () => {
                             )}
                         />
 
-                        {/* Description */}
                         <FormField
                             control={form.control}
                             name="description"
@@ -282,7 +270,6 @@ const AddCouponPage = () => {
                             )}
                         />
 
-                        {/* Price */}
                         <FormField
                             control={form.control}
                             name="priceCoins"
@@ -341,7 +328,6 @@ const AddCouponPage = () => {
                             }}
                         />
 
-                        {/* Enabled switch */}
                         <FormField
                             control={form.control}
                             name="enabled"
@@ -361,7 +347,6 @@ const AddCouponPage = () => {
                             )}
                         />
 
-                        {/* Actions */}
                         <div className="grid grid-cols-2 gap-3 pt-2">
                             <Link href={ROUTES.CLUB_COUPONS || "/c/coupons"}>
                                 <Button

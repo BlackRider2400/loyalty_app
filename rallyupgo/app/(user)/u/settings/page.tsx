@@ -1,11 +1,10 @@
-// app/u/settings/page.tsx
 "use client";
 
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import {
     AlertDialog,
@@ -27,7 +26,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { toast } from "sonner"; // or your toast lib
+import { toast } from "sonner";
 
 const Tile = ({
     imgUrl,
@@ -57,7 +56,7 @@ const Tile = ({
 
 const Settings = () => {
     const router = useRouter();
-    const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     async function handleLogout() {
         if (isLoggingOut) return;
@@ -68,9 +67,9 @@ const Settings = () => {
                 credentials: "include",
             });
             if (!res.ok) throw new Error("Logout failed");
-            toast?.success?.("Logged out");
+            toast.success("Logged out");
         } catch (e) {
-            toast?.info?.("Session cleared");
+            toast.info("Session cleared");
         } finally {
             router.replace("/");
             router.refresh();
@@ -166,7 +165,7 @@ const Settings = () => {
                 </Link>
 
                 <AlertDialog>
-                    <AlertDialogTrigger className="w-full">
+                    <AlertDialogTrigger className="w-full cursor-pointer">
                         <Tile
                             alt="logout"
                             imgUrl="/icons/logout.svg"

@@ -25,8 +25,11 @@ export default function AccActivationPage() {
             try {
                 setStatus("loading");
                 const res = await fetch(
-                    `/api/activate-account?token=${encodeURIComponent(token)}`
+                    `/api/auth/activate-account?token=${encodeURIComponent(
+                        token
+                    )}`
                 );
+
                 const data: ApiOk | ApiErr = await res.json();
 
                 if (aborted) return;
@@ -56,9 +59,7 @@ export default function AccActivationPage() {
         };
     }, [token]);
 
-    // --- UI states ---
     if (!token) {
-        // Your original "check your email" screen
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-primary-blue text-white">
                 <h1 className="text-2xl font-bold mb-4">
@@ -87,7 +88,6 @@ export default function AccActivationPage() {
         );
     }
 
-    // Token present: show activation flow
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-primary-blue text-white">
             <div className="max-w-md w-full text-center space-y-6">
@@ -110,29 +110,6 @@ export default function AccActivationPage() {
                             <Link
                                 href="/sign-in"
                                 className="rounded-[12px] bg-light-blue px-5 py-3 font-semibold hover:bg-primary-orange"
-                            >
-                                Go to Login
-                            </Link>
-                        </div>
-                    </>
-                )}
-
-                {status === "error" && (
-                    <>
-                        <h1 className="text-2xl font-bold">
-                            Activation failed
-                        </h1>
-                        <p className="opacity-90">{msg}</p>
-                        <div className="flex gap-3 justify-center">
-                            <Link
-                                href="/auth/resend-activation" // or your actual path to trigger resend
-                                className="rounded-[12px] bg-light-blue px-5 py-3 font-semibold hover:bg-primary-orange"
-                            >
-                                Resend email
-                            </Link>
-                            <Link
-                                href="/sign-in"
-                                className="rounded-[12px] border border-white/30 px-5 py-3 font-semibold hover:bg-white/10"
                             >
                                 Go to Login
                             </Link>

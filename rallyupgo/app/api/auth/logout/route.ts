@@ -11,7 +11,7 @@ export async function POST() {
 
         return NextResponse.json({ ok: true }, { status: 200 });
     } catch {
-        await clearSession(); // still clear locally
+        await clearSession();
         return NextResponse.json({ ok: false }, { status: 200 });
     }
 }

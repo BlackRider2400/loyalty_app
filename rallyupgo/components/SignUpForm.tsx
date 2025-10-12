@@ -54,7 +54,7 @@ export function SignUpForm() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    username: values.username, // mapped to "name" in the route
+                    username: values.username,
                     email: values.email,
                     password: values.password,
                 }),
@@ -71,7 +71,7 @@ export function SignUpForm() {
                         ? payload
                         : payload?.message || "User registered successfully.";
                 toast.success(msg);
-                // If you need server components to read fresh state, you can also call router.refresh()
+
                 router.push("/activate-account");
                 return;
             }
@@ -189,6 +189,7 @@ export function SignUpForm() {
                                         <Link
                                             href="/files/RallyUpGo_Terms_EN_NL.pdf"
                                             className="underline"
+                                            download
                                         >
                                             Terms & Conditions
                                         </Link>{" "}
@@ -196,6 +197,7 @@ export function SignUpForm() {
                                         <Link
                                             href="/files/RallyUpGo_Privacy_EN_NL.pdf"
                                             className="underline"
+                                            download
                                         >
                                             Privacy Policy
                                         </Link>

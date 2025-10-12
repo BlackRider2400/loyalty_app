@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
             }
 
             if (typeof error.body === "string") {
-                return new NextResponse(error.body, {
+                return NextResponse.json(error.body, {
                     status: error.status,
                     headers: { "Content-Type": "text/plain" },
                 });

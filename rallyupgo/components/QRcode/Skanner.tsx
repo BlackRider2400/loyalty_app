@@ -13,7 +13,7 @@ export default function QrScanner() {
 
         (async () => {
             controls = await reader.decodeFromVideoDevice(
-                undefined, // domyślna kamera
+                undefined,
                 videoRef.current!,
                 (res) => {
                     if (res) setResult(res.getText());
@@ -21,7 +21,6 @@ export default function QrScanner() {
             );
         })();
 
-        // Używamy controls – ESLint happy
         return () => controls?.stop();
     }, []);
 

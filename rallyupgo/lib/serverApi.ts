@@ -1,17 +1,10 @@
 import { cookies } from "next/headers";
+import { JwtResponseDTO, RefreshDto } from "@/lib/types";
 
 const API_BASE = process.env.AUTH_API_BASE!;
 const IS_PROD = process.env.NODE_ENV === "production";
-const COOKIE_DOMAIN = process.env.SESSION_COOKIE_DOMAIN;
 
-type RefreshDto = { refreshToken: string };
-type JwtResponseDTO = {
-    token: string;
-    type?: string;
-    email?: string;
-    refreshToken?: string;
-    roles?: string[];
-};
+const COOKIE_DOMAIN = process.env.SESSION_COOKIE_DOMAIN;
 
 const ACCESS = "access_token";
 const REFRESH = "refresh_token";
@@ -121,6 +114,20 @@ export async function proxyJson<T>(
         res = await backendFetch(path, init, withAuth);
     }
 
+    if (!res.ok) return await throwAsError(res);
+
+    const ct = res.headers.get("content-type") || "";
+    return ct.includes("application/json")
+        ? ((await res.json()) as T)
+        : ((await res.text()) as unknown as T);
+}
+
+export async function proxyJsonReadOnly<T>(
+    path: string,
+    init: RequestInit = {},
+    withAuth = true
+): Promise<T> {
+    const res = await backendFetch(path, init, withAuth);
     if (!res.ok) return await throwAsError(res);
 
     const ct = res.headers.get("content-type") || "";

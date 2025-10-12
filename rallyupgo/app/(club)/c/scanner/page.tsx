@@ -71,10 +71,7 @@ export default function ScannerPage() {
 
             <main className="flex-1 bg-primary-blue p-4">
                 <div className="max-w-md mx-auto space-y-4">
-                    {/* Wrap Scanner to capture the latest code via DOM observer */}
                     <div className="rounded-2xl overflow-hidden border-2 border-primary-orange bg-white p-2">
-                        {/* We keep your Skanner component exactly, and read its text via MutationObserver? 
-                Simpler: we accept manual confirm below. */}
                         <QrScanner />
                     </div>
 

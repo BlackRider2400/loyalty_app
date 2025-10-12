@@ -33,13 +33,9 @@ const SeeAllMetrics = () => {
 
     const bothSelected = month !== "" && year !== "";
 
-    // Example: react when both are chosen (fetch, etc.)
     useEffect(() => {
         if (!bothSelected) return;
 
-        // Do your fetch here
-        // fetch(`/api/metrics?start=${start.toISOString()}&end=${end.toISOString()}`)
-        //   .then(res => res.json()).then(setData)
         console.log("Selected:", { month, year });
     }, [month, year, bothSelected]);
     return (

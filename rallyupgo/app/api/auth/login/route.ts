@@ -5,13 +5,6 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        console.log(
-            "LOGIN forwarding email:",
-            body?.email,
-            "to:",
-            process.env.AUTH_API_BASE
-        );
-
         const data = await proxyJson<{
             token: string;
             refreshToken: string;

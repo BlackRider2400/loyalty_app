@@ -6,6 +6,7 @@ import com.rally.up.go.dto.ProductResponseDTO;
 import com.rally.up.go.dto.ShopUserDTO;
 import com.rally.up.go.exception.NotEnoughBalanceException;
 import com.rally.up.go.exception.ProductNotFoundException;
+import com.rally.up.go.exception.ShopNotSelectedException;
 import com.rally.up.go.exception.UuidNotFoundException;
 import com.rally.up.go.mapper.ClientUserMapper;
 import com.rally.up.go.mapper.CouponMapper;
@@ -76,7 +77,9 @@ public class ClientUserController {
                     @ApiResponse(responseCode = "200", description = "Client profile successfully retrieved.",
                             content = @Content(schema = @Schema(implementation = ClientUserDTO.class))),
                     @ApiResponse(responseCode = "404", description = "User not found."),
-                    @ApiResponse(responseCode = "403", description = "Forbidden (user not authenticated).")
+                    @ApiResponse(responseCode = "403", description = "Forbidden (user not authenticated)."),
+                    @ApiResponse(responseCode = "409", description = "User don't have current shop field.")
+
             }
     )
     @GetMapping("/me")
@@ -84,7 +87,13 @@ public class ClientUserController {
         if (userDetails != null) {
             ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
-            return ResponseEntity.ok(clientUserMapper.toDto(clientUser));
+
+            try {
+                ClientUserDTO clientUserDTO = clientUserMapper.toDto(clientUser);
+                return ResponseEntity.ok(clientUserDTO);
+            } catch (ShopNotSelectedException e) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+            }
         }
 
         return ResponseEntity.notFound().build();
@@ -105,6 +114,8 @@ public class ClientUserController {
                 .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
         clientUser.setCurrentShop(shopUserRepository.findById(shopId)
                 .orElseThrow(() -> new IllegalArgumentException("Shop not found")));
+
+        clientUserRepository.save(clientUser);
         return ResponseEntity.ok().build();
     }
 
@@ -132,7 +143,8 @@ public class ClientUserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Products successfully retrieved."),
                     @ApiResponse(responseCode = "404", description = "Client or current shop not found."),
-                    @ApiResponse(responseCode = "400", description = "Shop not selected (CurrentShop is null).")
+                    @ApiResponse(responseCode = "400", description = "Shop not selected (CurrentShop is null)."),
+                    @ApiResponse(responseCode = "409", description = "User don't have current shop field.")
             }
     )
     @GetMapping("/products")
@@ -140,10 +152,14 @@ public class ClientUserController {
         ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
 
-        List<Product> productList = clientUser.getCurrentShop().getProducts();
+        try {
+            List<Product> productList = clientUser.getCurrentShop().getProducts();
+            return ResponseEntity.ok(productList.stream()
+                    .map(product -> productMapper.toDto(product)).toList());
+        } catch (ShopNotSelectedException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
 
-        return ResponseEntity.ok(productList.stream()
-                .map(product -> productMapper.toDto(product)).toList());
     }
 
     @Operation(

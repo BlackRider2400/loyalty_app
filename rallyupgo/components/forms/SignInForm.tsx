@@ -173,9 +173,8 @@ export function SignInForm() {
                     </Button>
 
                     <Link
-                        href="/reset-password"
+                        href="/forgot-password"
                         className="mt-3 px-2 text-[16px] font-semibold hover:text-primary-orange text-light-blue underline italic"
-                        aria-label="Go to reset password page"
                     >
                         Forgot password?
                     </Link>

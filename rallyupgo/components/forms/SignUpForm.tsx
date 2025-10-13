@@ -72,7 +72,7 @@ export function SignUpForm() {
                         : payload?.message || "User registered successfully.";
                 toast.success(msg);
 
-                router.push("/activate-account");
+                router.push("/check-email");
                 return;
             }
 

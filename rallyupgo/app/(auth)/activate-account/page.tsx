@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 type ApiOk = { message: string };
 type ApiErr = { error: string };
 
-export default function AccActivationPage() {
+const AccActivationPage = () => {
     const sp = useSearchParams();
     const token = sp.get("token");
 
@@ -119,4 +119,6 @@ export default function AccActivationPage() {
             </div>
         </div>
     );
-}
+};
+
+export default AccActivationPage;

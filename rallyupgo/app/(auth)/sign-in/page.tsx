@@ -1,4 +1,4 @@
-import { SignInForm } from "@/components/SignInForm";
+import { SignInForm } from "@/components/forms/SignInForm";
 import Image from "next/image";
 import React from "react";
 

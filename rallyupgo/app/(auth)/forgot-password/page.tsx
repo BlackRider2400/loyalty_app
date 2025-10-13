@@ -1,8 +1,8 @@
-import { SignUpForm } from "@/components/forms/SignUpForm";
+import ForgotPasswordForm from "@/components/forms/ForgotPasswordForm";
 import Image from "next/image";
 import React from "react";
 
-const SignUp = () => {
+const ForgotPassword = () => {
     return (
         <div className="min-h-screen flex flex-col bg-primary-blue">
             <section className="flex-center">
@@ -15,14 +15,14 @@ const SignUp = () => {
                 />
             </section>
 
-            <section className="p-4 w-full flex flex-col mt-10">
+            <section className="p-4 w-full flex flex-col mt-20">
                 <h1 className="mb-4 text-white text-[20px] font-bold">
-                    Sign Up
+                    Enter your email
                 </h1>
-                <SignUpForm />
+                <ForgotPasswordForm />
             </section>
         </div>
     );
 };
 
-export default SignUp;
+export default ForgotPassword;

@@ -5,6 +5,9 @@ const PUBLIC_PATHS = new Set([
     "/sign-in",
     "/sign-up",
     "/activate-account",
+    "/reset-password",
+    "/forgot-password",
+    "/check-email",
 ]);
 
 function getRoles(req: NextRequest): string[] {

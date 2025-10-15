@@ -1,21 +1,7 @@
-"use client";
-
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import React from "react";
 
 import {
     Sheet,
@@ -26,57 +12,26 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { toast } from "sonner";
+import Tile from "@/components/Tile";
+import Logout from "@/components/Logout";
+import { proxyJsonReadOnly } from "@/lib/serverApi";
+import { ClientUserDTO } from "@/lib/types";
 
-const Tile = ({
-    imgUrl,
-    alt,
-    text,
-}: {
-    imgUrl: string;
-    alt: string;
-    text: string;
-}) => {
-    return (
-        <div className="border-t-1 py-4 px-1 flex items-center justify-between">
-            <div className="flex-center gap-[10px]">
-                <Image src={imgUrl} alt={alt} width={24} height={24} />
-                <p className="text-white text-[16px]">{text}</p>
-            </div>
-            <Image
-                src="/icons/arrow.svg"
-                alt="arrow"
-                width={16}
-                height={16}
-                className="rotate-180"
-            />
-        </div>
-    );
-};
+const Settings = async () => {
+    let user: { username?: string } = {};
+    try {
+        const me = await proxyJsonReadOnly<ClientUserDTO>("/api/client/me", {
+            cache: "no-store",
+        });
+        user = { username: me.username };
+    } catch (err) {
+        const error = err as { body?: string; status?: number };
+        const status = Number(error?.status) || 500;
 
-const Settings = () => {
-    const router = useRouter();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-    async function handleLogout() {
-        if (isLoggingOut) return;
-        setIsLoggingOut(true);
-        try {
-            const res = await fetch("/api/auth/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-            if (!res.ok) throw new Error("Logout failed");
-            toast.success("Logged out");
-        } catch (e) {
-            toast.info("Session cleared");
-        } finally {
-            router.replace("/");
-            router.refresh();
-            setIsLoggingOut(false);
-        }
+        console.error(`Failed to load user profile (${status}):`, err);
     }
 
+    // const user = { username: "JohnDoe" };
     return (
         <div className="flex flex-col min-h-screen">
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center px-3">
@@ -102,7 +57,7 @@ const Settings = () => {
 
                         <p className="flex flex-col text-white text-[12px] leading-[150%]">
                             Profile
-                            <span className="text-[18px]">twojaStara69</span>
+                            <span className="text-[18px]">{user.username}</span>
                         </p>
                     </div>
                     <Image
@@ -164,34 +119,7 @@ const Settings = () => {
                     />
                 </Link>
 
-                <AlertDialog>
-                    <AlertDialogTrigger className="w-full cursor-pointer">
-                        <Tile
-                            alt="logout"
-                            imgUrl="/icons/logout.svg"
-                            text="Logout"
-                        />
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>
-                                Are you sure you want to logout?
-                            </AlertDialogTitle>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="flex-center gap-2 flex-row">
-                            <AlertDialogCancel className="flex-1">
-                                Cancel
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                                className="flex-1 bg-primary-blue hover:bg-primary-orange disabled:opacity-50"
-                                onClick={handleLogout}
-                                disabled={isLoggingOut}
-                            >
-                                {isLoggingOut ? "Logging out..." : "Continue"}
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <Logout />
             </section>
 
             <Footer />

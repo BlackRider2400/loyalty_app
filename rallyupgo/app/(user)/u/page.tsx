@@ -1,66 +1,76 @@
 import CouponCard from "@/components/CouponCard";
 import Footer from "@/components/Footer";
-import ImageCard from "@/components/ImageCard";
+
+import ShopScroller from "@/components/ShopScroller";
 
 import { ROUTES } from "@/constants/routes";
+import { proxyJsonReadOnly } from "@/lib/serverApi";
+import { ClientUserDTO, ProductResponseDTO, ShopUserDTO } from "@/lib/types";
 
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const UserPage = () => {
-    const clubs = [
-        {
-            id: 1,
-            name: "11 Punkt",
-            imgUrl: "/images/clubImage.jpg",
-        },
-        {
-            id: 2,
-            name: "Frans Otten Stadion",
-            imgUrl: "/images/clubImage.jpg",
-        },
-        {
-            id: 3,
-            name: "Frans Otten Stadion",
-            imgUrl: "/images/clubImage.jpg",
-        },
-    ];
+const UserPage = async () => {
+    let user: { balance?: number; username?: string } = {};
+    let currentShopId: number | undefined;
 
-    const AvailableCoupons: Coupon[] = [
-        {
-            id: "c1",
-            title: "Abc -50%",
-            location: "Frans Otten Station",
-            description: "Half-price coffee at reception.",
-            imgUrl: "https://mylovelyserver.fun:8443/rally-up-go/uploads/1758239054578_test_image.jpeg",
-            priceCoins: 150,
-            code: "COF50-7KQ8",
-            enabled: true,
-        },
-        {
-            id: "c2",
-            title: "Squash Court -20%",
-            location: "Frans Otten Station",
-            description: "20% off next court rental.",
-            imgUrl: "/images/coffee.jpg",
-            priceCoins: 400,
-            code: "COF50-7KQ8",
-            enabled: true,
-        },
-        {
-            id: "c3",
-            title: "Protein Bar FREE",
-            location: "Frans Otten Station",
-            description: "Grab one free protein bar.",
-            imgUrl: "/images/coffee.jpg",
-            priceCoins: 250,
-            code: "COF50-7KQ8",
-            enabled: true,
-        },
-    ];
+    try {
+        const me = await proxyJsonReadOnly<ClientUserDTO>("/api/client/me", {
+            cache: "no-store",
+        });
+        user = { balance: me.balance, username: me.username };
+        console.log("ME:", me);
+        currentShopId = me.currentShopUserDTO?.id;
+    } catch (err) {
+        const error = err as { body?: string; status?: number };
+        const status = Number(error?.status) || 500;
+        console.error(`Failed to load user profile (${status}):`, err);
+    }
+
+    let shops: ShopUserDTO[] = [];
+    let shopsError: string | null = null;
+    try {
+        shops = await proxyJsonReadOnly<ShopUserDTO[]>("/api/client/shops", {
+            cache: "no-store",
+        });
+    } catch (e) {
+        const err = e as { status?: number; body?: string };
+        shopsError = err?.body || "Failed to load shops.";
+        console.error(shopsError, e);
+    }
+
+    let products: ProductResponseDTO[] = [];
+    let productsError: string | null = null;
+    try {
+        products = await proxyJsonReadOnly<ProductResponseDTO[]>(
+            "/api/client/products",
+            {
+                cache: "no-store",
+            }
+        );
+    } catch (e) {
+        const err = e as { status?: number; body?: string };
+        productsError = err?.body || "Failed to load products.";
+        console.error(productsError, e);
+    }
+
+    const activeShopName =
+        shops.find((s) => s.id === currentShopId)?.name || "Selected Club";
+
+    const availableCoupons: Coupon[] = (products || []).map((p) => ({
+        id: String(p.id),
+        title: p.name,
+        location: activeShopName,
+        description: p.description || "",
+        imgUrl: p.imageUrl || "/images/clubImage.jpg",
+        priceCoins: p.price ?? 0,
+        code: "",
+        enabled: true,
+    }));
+
     return (
-        <div className="flex flex-col items-center justify-center ">
+        <div className="flex flex-col items-center justify-center">
             <section className="bg-primary-blue w-full flex flex-col px-4">
                 <div className="flex-center items-center w-full relative">
                     <Image
@@ -82,7 +92,7 @@ const UserPage = () => {
                 </div>
                 <div className="border-t-[1px] border-t-white">
                     <h1 className="my-2 text-start text-[28px] italic text-white font-bold tracking-[-0.43px]">
-                        Hi, User 1!
+                        Hi, {user.username}!
                     </h1>
                 </div>
                 <div className="flex flex-col items-start pb-4">
@@ -92,7 +102,9 @@ const UserPage = () => {
                             <span className="text-primary-orange">Rally</span>
                             <span className="text-light-blue">Coins</span>
                         </h1>
-                        <span className="text-white text-[40px]">2115</span>
+                        <span className="text-white text-[40px]">
+                            {user.balance}
+                        </span>
                         <Image
                             src="/icons/coins.svg"
                             alt="coins"
@@ -104,48 +116,47 @@ const UserPage = () => {
                 </div>
             </section>
 
-            <section className="flex-1 bg-[#F8F9FB] w-full">
+            <section className="flex-1 bg-[#F8F9FB] w-full pb-[350px]">
                 <div className="w-full flex flex-col">
                     <h1 className="text-primary-blue text-[16px] font-semibold p-4">
                         View Each Club&apos;s Offer
                     </h1>
-                    <div className="flex overflow-x-auto">
-                        {clubs.map((club) => (
-                            <ImageCard
-                                key={club.id}
-                                imgUrl={club.imgUrl}
-                                alt={club.name}
-                                text={club.name}
-                                active={club.id === 1}
-                            />
-                        ))}
 
-                        <div className="rounded-[16px] mx-4 relative flex-center bg-[#242B581A] min-w-[130px]">
-                            <span
-                                aria-hidden="true"
-                                className="absolute inset-0 bg-black/40 rounded-[16px]"
-                            />
-
-                            <p className="text-white font-extrabold text-[10px] max-w-[120px] mx-auto text-center z-10">
-                                More Coming Soon...
-                            </p>
+                    {!shopsError && shops.length > 0 ? (
+                        <ShopScroller
+                            shops={shops}
+                            currentShopId={currentShopId}
+                        />
+                    ) : (
+                        <div className="px-4 pb-2 text-sm text-red-600">
+                            {shopsError ?? "No shops available."}
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div className="w-full flex flex-col p-4">
                     <h1 className="text-primary-blue text-[16px] font-semibold mb-4">
                         Collect Coupons
                     </h1>
-                    <div className="grid grid-cols-2 gap-4">
-                        {AvailableCoupons.map((coupon, idx) => (
-                            <CouponCard key={idx} coupon={coupon} />
-                        ))}
-                    </div>
+
+                    {productsError ? (
+                        <div className="text-sm text-red-600">
+                            {productsError}
+                        </div>
+                    ) : availableCoupons.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-4">
+                            {availableCoupons.map((coupon, idx) => (
+                                <CouponCard key={idx} coupon={coupon} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-sm text-slate-500">
+                            No products in this club yet.
+                        </div>
+                    )}
                 </div>
             </section>
-            <div className="w-full h-[100px] bg-[#F8F9FB]">
-                <Footer />
-            </div>
+
+            <Footer />
         </div>
     );
 };

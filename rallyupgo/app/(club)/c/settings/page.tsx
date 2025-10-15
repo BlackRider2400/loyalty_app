@@ -13,16 +13,8 @@ import {
     SheetDescription,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-    AlertDialog,
-    AlertDialogTrigger,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogFooter,
-    AlertDialogCancel,
-    AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+
+import Logout from "@/components/Logout";
 
 const Row = ({ icon, label }: { icon: string; label: string }) => (
     <div className="border-t-1 py-4 px-1 flex items-center justify-between">
@@ -40,7 +32,7 @@ const Row = ({ icon, label }: { icon: string; label: string }) => (
     </div>
 );
 
-export default function ClubSettings() {
+const ClubSettings = () => {
     return (
         <div className="flex flex-col min-h-screen">
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center px-3">
@@ -113,29 +105,12 @@ export default function ClubSettings() {
                     />
                 </Link>
 
-                <AlertDialog>
-                    <AlertDialogTrigger className="w-full">
-                        <Row icon="/icons/logout.svg" label="Logout" />
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>
-                                Are you sure you want to logout?
-                            </AlertDialogTitle>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="flex-center gap-2 flex-row">
-                            <AlertDialogCancel className="flex-1">
-                                Cancel
-                            </AlertDialogCancel>
-                            <AlertDialogAction className="flex-1 bg-primary-blue hover:bg-primary-orange">
-                                Continue
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
+                <Logout />
             </section>
 
             <ClubFooter />
         </div>
     );
-}
+};
+
+export default ClubSettings;

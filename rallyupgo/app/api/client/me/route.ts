@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { ClientUserDTO } from "@/lib/types";
-import { proxyJson, proxyJsonReadOnly } from "@/lib/serverApi";
+import { proxyJsonReadOnly } from "@/lib/serverApi";
 
 export async function GET() {
     try {

@@ -21,6 +21,7 @@ export type ClientUserDTO = {
     email: string;
     qrCode: string;
     balance: number;
+    currentShopUserDTO?: ShopUserDTO | null;
     couponDTOList: CouponDTO[];
 };
 
@@ -32,4 +33,19 @@ export type JwtResponseDTO = {
     email?: string;
     refreshToken?: string;
     roles?: string[];
+};
+
+export type ShopUserDTO = {
+    id: number;
+    name: string;
+    products: ShopItems[];
+};
+
+export type ShopItems = {
+    id: number;
+    shopId: number;
+    name: string;
+    description: string;
+    price: number;
+    imageUrl: string;
 };

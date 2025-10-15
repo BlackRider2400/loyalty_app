@@ -9,6 +9,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(indexes = {
+        @Index(columnList = "code", unique = true, name = "idx_coupon_code"),
+        @Index(columnList = "used, date_used", name = "idx_coupon_used_date"),
+        @Index(columnList = "client_user_id, product_id, used", name = "idx_coupon_user_product_used"),
+        @Index(columnList = "product_id", name = "idx_coupon_product")
+})
 @Data
 @AllArgsConstructor
 @Builder

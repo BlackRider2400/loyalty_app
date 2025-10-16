@@ -5,6 +5,7 @@ public record ProductResponseDTO(
         long shopId,
         String name,
         String description,
+        boolean active,
         int price,
         String imageUrl
         ) {

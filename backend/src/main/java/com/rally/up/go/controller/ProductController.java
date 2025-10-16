@@ -77,7 +77,7 @@ public class ProductController {
         ShopUser shopUser = shopUserRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(userDetails.getUsername()));
 
-        Product product = new Product(null, dto.name(), dto.description(), dto.price(), imageUrl, shopUser);
+        Product product = new Product(null, dto.name(), dto.description(), dto.price(), imageUrl, dto.active(), shopUser);
         productRepository.save(product);
 
         return ResponseEntity.ok(productMapper.toDto(product));
@@ -157,6 +157,8 @@ public class ProductController {
         if (!productRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
+
+        //TODO create some handler for deleting files, best to make service for handling files
 
         productRepository.deleteById(id);
 

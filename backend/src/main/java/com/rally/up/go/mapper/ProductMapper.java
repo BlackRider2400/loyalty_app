@@ -23,6 +23,7 @@ public class ProductMapper {
                 product.getShop().getId(),
                 product.getName(),
                 product.getDescription(),
+                product.getActive(),
                 product.getPrice(),
                 (product.getImage() == null ? null : baseUrl + contextPath + product.getImage())
         );

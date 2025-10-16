@@ -20,6 +20,7 @@ public class Product {
     private String description;
     private int price;
     private String image;
+    private Boolean active;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_user_id", nullable = false)

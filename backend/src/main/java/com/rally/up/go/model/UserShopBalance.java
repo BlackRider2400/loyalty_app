@@ -14,7 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "user_shop_balance",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"client_user_id", "shop_user_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"client_user_id", "shop_user_id"}),
+        indexes = {
+            @Index(columnList = "shop_id, created_at", name = "idx_user_shop_balance_shop_created")
+        }
+)
 public class UserShopBalance {
 
     @Id

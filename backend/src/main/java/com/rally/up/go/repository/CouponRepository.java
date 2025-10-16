@@ -34,13 +34,12 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     );
 
     @Query("SELECT new com.rally.up.go.dto.CouponHourlyStatsDTO(" +
-           "c.product.id, c.product.name, HOUR(c.dateUsed), COUNT(c)) " +
-           "FROM Coupon c " +
-           "WHERE c.used = true AND c.dateUsed BETWEEN :startDate AND :endDate " +
-           "GROUP BY c.product.id, c.product.name, FUNCTION('HOUR', c.dateUsed)")
-    List<CouponHourlyStatsDTO> findUsedCouponsGroupedByProductAndHour(
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
+            "c.product.id, c.product.name, HOUR(c.dateUsed), COUNT(c)) " +
+            "FROM Coupon c " +
+            "WHERE c.used = true AND DATE(c.dateUsed) = DATE(:date) " +
+            "GROUP BY c.product.id, c.product.name, HOUR(c.dateUsed)")
+    List<CouponHourlyStatsDTO> findUsedCouponsGroupedByProductAndHourForDate(
+            @Param("date") LocalDateTime date
     );
 
     @Query("SELECT new com.rally.up.go.dto.CouponDailyStatsDTO(" +

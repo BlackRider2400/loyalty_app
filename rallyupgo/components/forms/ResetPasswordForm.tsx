@@ -65,8 +65,7 @@ const ResetPasswordPage = () => {
                 {
                     method: "POST",
                     headers: { "content-type": "text/plain" },
-                    // credentials: "include",
-                    // Backend ultimately expects *plain text* body.
+
                     body: values.password.trim(),
                 }
             );

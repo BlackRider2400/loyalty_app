@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { BrowserQRCodeReader } from "@zxing/browser";
 
-export default function QrScanner() {
+interface QrScannerProps {
+    onScanResult?: (uuid: string) => void;
+}
+
+const QrScanner = ({ onScanResult }: QrScannerProps) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [result, setResult] = useState("");
 
@@ -16,13 +20,17 @@ export default function QrScanner() {
                 undefined,
                 videoRef.current!,
                 (res) => {
-                    if (res) setResult(res.getText());
+                    if (res) {
+                        const scannedText = res.getText();
+                        setResult(scannedText);
+                        onScanResult?.(scannedText);
+                    }
                 }
             );
         })();
 
         return () => controls?.stop();
-    }, []);
+    }, [onScanResult]);
 
     return (
         <div className="space-y-3">
@@ -30,4 +38,6 @@ export default function QrScanner() {
             <div className="text-sm text-gray-600">Wynik: {result || "—"}</div>
         </div>
     );
-}
+};
+
+export default QrScanner;

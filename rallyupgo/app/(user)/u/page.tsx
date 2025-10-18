@@ -1,6 +1,17 @@
 import CouponCard from "@/components/CouponCard";
 import Footer from "@/components/Footer";
 
+import {
+    AlertDialog,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import ShopScroller from "@/components/ShopScroller";
 
 import { ROUTES } from "@/constants/routes";
@@ -113,6 +124,52 @@ const UserPage = async () => {
                             className="rotate-180"
                         />
                     </div>
+
+                    <AlertDialog>
+                        <AlertDialogTrigger className="w-full">
+                            <div className="w-full bg-light-blue text-white flex-center py-1 text-[18px] rounded-[10px] font-semibold mt-2">
+                                How to collect RallyCoins
+                            </div>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="flex">
+                                    How to collect{" "}
+                                    <span className="text-primary-orange ml-1">
+                                        Rally
+                                    </span>
+                                    <span className="text-light-blue">
+                                        Coins
+                                    </span>
+                                    ?
+                                    <Image
+                                        src="/icons/coins.svg"
+                                        alt="coins"
+                                        width={24}
+                                        height={24}
+                                        className="rotate-180 ml-2"
+                                    />
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    When you pay for a squash court, you receive
+                                    Rally Coins.
+                                    <br />
+                                    <br />
+                                    The higher the payment, the more Rally Coins
+                                    you get.
+                                    <br />
+                                    <br />
+                                    You can earn Rally Coins once per day, so
+                                    every court visit counts!
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className="flex-center gap-2 flex-row">
+                                <AlertDialogCancel className="flex-1">
+                                    Got it
+                                </AlertDialogCancel>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </section>
 

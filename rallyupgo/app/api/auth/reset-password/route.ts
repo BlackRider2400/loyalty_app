@@ -5,11 +5,9 @@ export const runtime = "nodejs";
 
 export async function POST(req: Request) {
     try {
-        // 1) Get token from the query string
         const { searchParams } = new URL(req.url);
         let token: string | undefined = searchParams.get("token") ?? undefined;
 
-        // 2) Read body once; accept JSON string, JSON object, or plain text
         const contentType = req.headers.get("content-type") || "";
         const raw = await req.text();
 
@@ -27,15 +25,12 @@ export async function POST(req: Request) {
                         password = parsed.password;
                 }
             } catch {
-                // Bad JSON? Treat body as literal password
                 password = raw;
             }
         } else {
-            // text/plain (or anything else): body is the password
             password = raw;
         }
 
-        // 3) Validate inputs
         if (!token) {
             return NextResponse.json(
                 { error: "Token is required." },
@@ -49,8 +44,6 @@ export async function POST(req: Request) {
             );
         }
 
-        // 4) Forward to backend as the Swagger/email contract requires:
-        //    token in query, body is *plain text* (not JSON)
         const msg = await proxyJson<string>(
             `/auth/reset-password?token=${encodeURIComponent(token)}`,
             {

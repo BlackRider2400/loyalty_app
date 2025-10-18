@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { ROUTES } from "@/constants/routes";
@@ -7,7 +5,9 @@ import ClubFooter from "@/components/ClubFooter";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import CouponCard from "@/components/CouponCard";
-const ClubHome = () => {
+import { ShopUserDTO } from "@/lib/types";
+import { proxyJsonReadOnly } from "@/lib/serverApi";
+const ClubHome = async () => {
     const AvailableCoupons: Coupon[] = [
         {
             id: "c1",
@@ -40,6 +40,21 @@ const ClubHome = () => {
             enabled: true,
         },
     ];
+
+    let shop: { balance?: number; username?: string } = {};
+
+    try {
+        const me = await proxyJsonReadOnly<ShopUserDTO>("/api/shop/me", {
+            cache: "no-store",
+        });
+        shop = { username: me.name };
+        // console.log("ME:", me);
+    } catch (err) {
+        const error = err as { body?: string; status?: number };
+        const status = Number(error?.status) || 500;
+        console.error(`Failed to load user profile (${status}):`, err);
+    }
+
     return (
         <div className="min-h-screen flex flex-col">
             <section className="bg-primary-blue w-full flex flex-col px-4">
@@ -64,7 +79,7 @@ const ClubHome = () => {
 
                 <div className="border-t-[1px] border-t-white">
                     <h1 className="my-2 text-start text-[28px] italic text-white font-bold tracking-[-0.43px]">
-                        Hello, Frans Otten Stadion!
+                        Hello, {shop.username}!
                     </h1>
                 </div>
 

@@ -172,11 +172,23 @@ const AddCouponPage = () => {
             fd.append("enabled", String(values.enabled));
             fd.append("file", values.file);
 
+            const res = await fetch("/api/shop/products", {
+                method: "POST",
+                body: fd,
+            });
+
+            if (!res.ok) {
+                const { error } = (await res.json().catch(() => ({}))) as {
+                    error?: string;
+                };
+                throw new Error(error || `Failed with ${res.status}`);
+            }
+
             toast.success("Coupon created successfully!");
             router.push(ROUTES.CLUB_COUPONS || "/c/coupons");
         } catch (e) {
-            console.error(e);
-            alert("Failed to create coupon.");
+            const error = e as { message?: string };
+            toast.error(error?.message || "Failed to create coupon.");
         } finally {
             setSubmitting(false);
         }

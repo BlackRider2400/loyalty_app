@@ -1,46 +1,14 @@
-import React from "react";
+"use client";
 
+import React, { useEffect, useState } from "react";
 import { ROUTES } from "@/constants/routes";
 import Image from "next/image";
 import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
 import ClubCouponCard from "@/components/ClubCouponCard";
 import ClubFooter from "@/components/ClubFooter";
 import { Button } from "@/components/ui/button";
-
-const AvailableCoupons: Coupon[] = [
-    {
-        id: "c1",
-        title: "Abc -50%",
-        location: "Frans Otten Station",
-        description: "Half-price coffee at reception.",
-        imgUrl: "/images/coffee.jpg",
-        priceCoins: 150,
-        code: "COF50-7KQ8",
-        enabled: true,
-    },
-    {
-        id: "c2",
-        title: "Squash Court -20%",
-        location: "Frans Otten Station",
-        description: "20% off next court rental.",
-        imgUrl: "/images/coffee.jpg",
-        priceCoins: 400,
-        code: "COF50-7KQ8",
-        enabled: true,
-    },
-    {
-        id: "c3",
-        title: "Protein Bar FREE",
-        location: "Frans Otten Station",
-        description: "Grab one free protein bar.",
-        imgUrl: "/images/coffee.jpg",
-        priceCoins: 250,
-        code: "COF50-7KQ8",
-        enabled: true,
-    },
-];
+import type { ProductResponseDTO } from "@/lib/types";
 
 const HistoryCoupon: Coupon[] = [
     {
@@ -64,6 +32,58 @@ const HistoryCoupon: Coupon[] = [
 ];
 
 const ClubCouponsPage = () => {
+    const [allCoupons, setAllCoupons] = useState<Coupon[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const ac = new AbortController();
+
+        (async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const res = await fetch("/api/shop/products", {
+                    method: "GET",
+                    cache: "no-store",
+                    signal: ac.signal,
+                });
+
+                if (!res.ok) {
+                    const j = await res.json().catch(() => ({}));
+                    throw new Error(
+                        j?.error || `Failed to load products (${res.status})`
+                    );
+                }
+
+                const products = (await res.json()) as ProductResponseDTO[];
+
+                const mapped: Coupon[] = products.map((p) => ({
+                    id: String(p.id),
+                    title: p.name,
+                    description: p.description ?? "",
+                    imgUrl: p.imageUrl || "/images/coffee.jpg",
+                    priceCoins: Number(p.price) || 0,
+                    location: "",
+                    code: "",
+                    enabled: true,
+                }));
+
+                setAllCoupons(mapped);
+            } catch (e) {
+                const err = e as { name?: string; message?: string };
+                if (err.name !== "AbortError") {
+                    setError(err.message || "Failed to fetch products");
+                }
+            } finally {
+                setLoading(false);
+            }
+        })();
+
+        return () => ac.abort();
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col bg-primary-blue">
             <section className="bg-primary-orange w-full pt-12 pb-5 flex-center justify-between px-3">
@@ -111,11 +131,29 @@ const ClubCouponsPage = () => {
                     </Link>
 
                     <TabsContent value="All" className="mt-4">
-                        <div className="flex flex-col gap-6">
-                            {AvailableCoupons.map((c) => (
-                                <ClubCouponCard key={c.id} coupon={c} />
-                            ))}
-                        </div>
+                        {loading && (
+                            <div className="text-white/80 text-center py-6">
+                                Loading…
+                            </div>
+                        )}
+                        {!loading && error && (
+                            <div className="text-red-300 text-center py-6">
+                                {error}
+                            </div>
+                        )}
+                        {!loading && !error && (
+                            <div className="flex flex-col gap-6">
+                                {allCoupons.length > 0 ? (
+                                    allCoupons.map((c) => (
+                                        <ClubCouponCard key={c.id} coupon={c} />
+                                    ))
+                                ) : (
+                                    <div className="text-white/80 text-center py-6">
+                                        No products found.
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </TabsContent>
 
                     <TabsContent value="Active" className="mt-4">
@@ -125,6 +163,7 @@ const ClubCouponsPage = () => {
                             ))}
                         </div>
                     </TabsContent>
+
                     <TabsContent value="Inactive" className="mt-4">
                         <div className="flex flex-col gap-6">
                             {HistoryCoupon.map((c) => (

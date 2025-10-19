@@ -3,6 +3,7 @@ package com.rally.up.go.model;
 import com.rally.up.go.exception.NotEnoughBalanceException;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,9 +17,10 @@ import java.time.LocalDateTime;
 @Table(name = "user_shop_balance",
         uniqueConstraints = @UniqueConstraint(columnNames = {"client_user_id", "shop_user_id"}),
         indexes = {
-            @Index(columnList = "shop_id, created_at", name = "idx_user_shop_balance_shop_created")
+            @Index(columnList = "shop_user_id, created_at", name = "idx_user_shop_balance_shop_created")
         }
 )
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserShopBalance {
 
     @Id

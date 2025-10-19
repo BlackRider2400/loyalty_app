@@ -12,7 +12,7 @@ import java.util.UUID;
 @Table(indexes = {
         @Index(columnList = "code", unique = true, name = "idx_coupon_code"),
         @Index(columnList = "used, date_used", name = "idx_coupon_used_date"),
-        @Index(columnList = "client_user_id, product_id, used", name = "idx_coupon_user_product_used"),
+        @Index(columnList = "user_id, product_id, used", name = "idx_coupon_user_product_used"),
         @Index(columnList = "product_id", name = "idx_coupon_product")
 })
 @Data

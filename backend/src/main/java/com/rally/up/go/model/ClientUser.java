@@ -5,10 +5,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.*;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Data
 @AllArgsConstructor
 @Entity
@@ -16,13 +17,16 @@ import java.util.*;
 public class ClientUser extends User {
 
     @OneToMany(mappedBy = "clientUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Coupon> couponList;
 
     @OneToMany(mappedBy = "clientUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private Set<UserShopBalance> shopBalances = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "current_shop_id")
+    @ToString.Exclude
     private ShopUser currentShop;
 
     public ClientUser() {
@@ -78,4 +82,19 @@ public class ClientUser extends User {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private QrCode qrCode;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ClientUser that = (ClientUser) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

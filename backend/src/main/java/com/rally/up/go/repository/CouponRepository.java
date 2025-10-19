@@ -27,7 +27,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             @Param("productId") Long productId
     );
 
-    @Query("SELECT c FROM Coupon c WHERE c.used = true AND c.date_used BETWEEN :startDate AND :endDate")
+    @Query("SELECT c FROM Coupon c WHERE c.used = true AND c.dateUsed BETWEEN :startDate AND :endDate")
     List<Coupon> findUsedCouponsByDateRange(
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
@@ -43,7 +43,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     );
 
     @Query("SELECT new com.rally.up.go.dto.CouponDailyStatsDTO(" +
-            "c.product.id, c.product.name, DATE(c.dateUsed), COUNT(c)) " +
+            "c.product.id, c.product.name, CAST(DATE(c.dateUsed) AS string), COUNT(c)) " +
             "FROM Coupon c " +
             "WHERE c.used = true AND c.dateUsed BETWEEN :startDate AND :endDate " +
             "GROUP BY c.product.id, c.product.name, DATE(c.dateUsed) " +
@@ -52,5 +52,4 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
-
 }

@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -90,8 +91,13 @@ public class ShopController {
         QrCode qrCode = qrCodeRepository.findByUuid(qrCodeCreditsDTO.uuid())
                 .orElseThrow(() -> new UuidNotFoundException(qrCodeCreditsDTO.uuid()));
 
-        qrCode.getClientUser().setCurrentShop(shopUser);
-        qrCode.getClientUser().addBalance(qrCodeCreditsDTO.credits());
+        if(qrCode.useQrCode()) {
+            qrCode.getClientUser().setCurrentShop(shopUser);
+            qrCode.getClientUser().addBalance(qrCodeCreditsDTO.credits());
+        } else {
+            return ResponseEntity.badRequest().body("QR Code has already been used.");
+        }
+
 
         qrCodeRepository.save(qrCode);
 
@@ -109,6 +115,7 @@ public class ShopController {
             }
     )
     @PostMapping("/use-coupon")
+    @Transactional
     public ResponseEntity<Boolean> useCoupon(@RequestBody String uuid) {
         Coupon coupon = couponRepository.findByCode(uuid).orElseThrow(() -> new UuidNotFoundException(uuid));
 
@@ -121,6 +128,7 @@ public class ShopController {
             coupon.getClientUser().removeBalance(coupon.getProduct().getPrice());
             coupon.setUsed(true);
             coupon.setDateUsed(LocalDateTime.now());
+            couponRepository.save(coupon);
 
             return ResponseEntity.ok().body(true);
         }

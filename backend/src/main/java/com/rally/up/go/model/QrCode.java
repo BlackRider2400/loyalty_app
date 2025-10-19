@@ -30,7 +30,11 @@ public class QrCode {
 
     public boolean useQrCode() {
         // if the qr code has been used more than 8 hours ago, set new date and uuid but return true, otherwise return false
-
+        if (this.dateUsed == null) {
+            this.dateUsed = Instant.now();
+            setNewUUID();
+            return true;
+        }
         if (this.dateUsed.isAfter(Instant.now().minusSeconds(3600 * 8))) {
             this.dateUsed = Instant.now();
             setNewUUID();
@@ -38,4 +42,5 @@ public class QrCode {
         }
         return false;
     }
+
 }

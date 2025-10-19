@@ -11,18 +11,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface UserShopBalanceRepository extends JpaRepository<Long, UserShopBalance> {
+public interface UserShopBalanceRepository extends JpaRepository<UserShopBalance, Long> {
+
     @Query("SELECT new com.rally.up.go.dto.UserShopBalanceStatsDTO(" +
-            "DATE(usb.createdAt), COUNT(DISTINCT usb.user.id)) " +
+            "CAST(DATE(usb.createdAt) AS string), " +
+            "COUNT(DISTINCT usb.clientUser.id)) " +
             "FROM UserShopBalance usb " +
-            "WHERE usb.shop.id = :shopId " +
-            "AND DATE(usb.createdAt) BETWEEN DATE(:startDate) AND DATE(:endDate) " +
-            "GROUP BY DATE(usb.createdAt) " +
-            "ORDER BY DATE(usb.createdAt) DESC")
+            "WHERE usb.shopUser.id = :shopId " +
+            "AND usb.createdAt BETWEEN :startDate AND :endDate " +
+            "GROUP BY FUNCTION('DATE_FORMAT', usb.createdAt, '%Y-%m-%d') " +
+            "ORDER BY FUNCTION('DATE_FORMAT', usb.createdAt, '%Y-%m-%d') DESC")
     List<UserShopBalanceStatsDTO> countNewUsersByShopAndDateRange(
             @Param("shopId") Long shopId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
-
 }

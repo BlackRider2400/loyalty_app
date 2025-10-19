@@ -5,8 +5,12 @@ import com.rally.up.go.dto.CouponDailyStatsDTO;
 import com.rally.up.go.dto.CouponHourlyStatsDTO;
 import com.rally.up.go.dto.UserShopBalanceStatsDTO;
 import com.rally.up.go.mapper.CouponMapper;
+import com.rally.up.go.model.ClientUser;
 import com.rally.up.go.model.Coupon;
+import com.rally.up.go.model.ShopUser;
+import com.rally.up.go.repository.ClientUserRepository;
 import com.rally.up.go.repository.CouponRepository;
+import com.rally.up.go.repository.ShopUserRepository;
 import com.rally.up.go.repository.UserShopBalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +28,14 @@ public class StatisticsService {
     private UserShopBalanceRepository userShopBalanceRepository;
 
     @Autowired
+    private ShopUserRepository shopUserRepository;
+
+    @Autowired
     private CouponMapper couponMapper;
 
-    public List<CouponDTO> getCoupons(LocalDateTime from, LocalDateTime to) {
-        List<Coupon> couponList = couponRepository.findUsedCouponsByDateRange(from, to);
+    public List<CouponDTO> getCoupons(String email, LocalDateTime from, LocalDateTime to) {
+        ShopUser shopUser = shopUserRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException(email));
+        List<Coupon> couponList = couponRepository.findUsedCouponsByDateRangeAndShopId(shopUser.getId(), from, to);
         return couponList.stream().map(coupon -> couponMapper.toDto(coupon)).toList();
     }
 

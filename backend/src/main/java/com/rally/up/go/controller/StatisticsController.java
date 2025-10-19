@@ -7,6 +7,8 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,8 +26,8 @@ public class StatisticsController {
 
     //getting all logs
     @GetMapping("/coupons-history")
-    public ResponseEntity<List<CouponDTO>> getCouponsHistory(@RequestParam LocalDateTime from, @RequestParam LocalDateTime to) {
-        return ResponseEntity.ok().body(statisticsService.getCoupons(from, to));
+    public ResponseEntity<List<CouponDTO>> getCouponsHistory(@AuthenticationPrincipal UserDetails userDetails, @RequestParam LocalDateTime from, @RequestParam LocalDateTime to) {
+        return ResponseEntity.ok().body(statisticsService.getCoupons(userDetails.getUsername(), from, to));
     }
 
 

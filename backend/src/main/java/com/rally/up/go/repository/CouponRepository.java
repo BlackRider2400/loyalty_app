@@ -28,24 +28,30 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     );
 
     @Query("SELECT c FROM Coupon c WHERE c.used = true AND c.product.shop.id = :shopId AND c.dateUsed BETWEEN :startDate AND :endDate")
-    List<Coupon> findUsedCouponsByDateRangeAndShopId(Long id, LocalDateTime from, LocalDateTime to);
+    List<Coupon> findUsedCouponsByDateRangeAndShopId(
+            @Param("shopId") Long shopId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
 
     @Query("SELECT new com.rally.up.go.dto.CouponHourlyStatsDTO(" +
             "c.product.id, c.product.name, HOUR(c.dateUsed), COUNT(c)) " +
             "FROM Coupon c " +
-            "WHERE c.used = true AND DATE(c.dateUsed) = DATE(:date) " +
+            "WHERE c.used = true AND c.product.shop.id = :shopId AND DATE(c.dateUsed) = DATE(:date) " +
             "GROUP BY c.product.id, c.product.name, HOUR(c.dateUsed)")
     List<CouponHourlyStatsDTO> findUsedCouponsGroupedByProductAndHourForDate(
+            @Param("shopId") Long shopId,
             @Param("date") LocalDateTime date
     );
 
     @Query("SELECT new com.rally.up.go.dto.CouponDailyStatsDTO(" +
             "c.product.id, c.product.name, CAST(DATE(c.dateUsed) AS string), COUNT(c)) " +
             "FROM Coupon c " +
-            "WHERE c.used = true AND c.dateUsed BETWEEN :startDate AND :endDate " +
+            "WHERE c.used = true AND c.product.shop.id = :shopId AND c.dateUsed BETWEEN :startDate AND :endDate " +
             "GROUP BY c.product.id, c.product.name, DATE(c.dateUsed) " +
             "ORDER BY DATE(c.dateUsed) DESC")
     List<CouponDailyStatsDTO> findUsedCouponsGroupedByProductAndDay(
+            @Param("shopId") Long shopId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );

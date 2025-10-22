@@ -307,4 +307,22 @@ public class AuthController {
         authTokenService.resetPassword(token, newPassword);
         return ResponseEntity.ok("Password reset successfully.");
     }
+
+    @Operation(summary = "Delete user account",
+            description = "Permanently deletes the authenticated user's account and all associated data")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Account deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing authentication")
+    })
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<String> deleteAccount(Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + authentication.getName()));
+
+        userRepository.delete(user);
+
+        return ResponseEntity.ok("Account deleted successfully");
+    }
+
+
 }

@@ -5,10 +5,12 @@ import com.rally.up.go.exception.NotEnoughBalanceException;
 import com.rally.up.go.exception.UuidNotFoundException;
 import com.rally.up.go.mapper.ShopUserMapper;
 import com.rally.up.go.model.Coupon;
+import com.rally.up.go.model.CreditTransaction;
 import com.rally.up.go.model.QrCode;
 import com.rally.up.go.dto.QrCodeCreditsDTO;
 import com.rally.up.go.model.ShopUser;
 import com.rally.up.go.repository.CouponRepository;
+import com.rally.up.go.repository.CreditTransactionRepository;
 import com.rally.up.go.repository.QrCodeRepository;
 import com.rally.up.go.repository.ShopUserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,6 +47,9 @@ public class ShopController {
 
     @Autowired
     private ShopUserMapper shopUserMapper;
+
+    @Autowired
+    private CreditTransactionRepository creditTransactionRepository;
 
     @Operation(
             summary = "Get current authenticated shop user details",
@@ -94,6 +99,13 @@ public class ShopController {
         if(qrCode.useQrCode()) {
             qrCode.getClientUser().setCurrentShop(shopUser);
             qrCode.getClientUser().addBalance(qrCodeCreditsDTO.credits());
+
+            CreditTransaction creditTransaction = new CreditTransaction();
+            creditTransaction.setAmount(qrCodeCreditsDTO.credits());
+            creditTransaction.setClientUser(qrCode.getClientUser());
+            creditTransaction.setShopUser(shopUser);
+
+            creditTransactionRepository.save(creditTransaction);
         } else {
             return ResponseEntity.badRequest().body("QR Code has already been used.");
         }

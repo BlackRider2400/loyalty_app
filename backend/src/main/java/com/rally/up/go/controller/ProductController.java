@@ -1,11 +1,13 @@
 package com.rally.up.go.controller;
 
+import com.rally.up.go.exception.ProductNotFoundException;
 import com.rally.up.go.mapper.ProductMapper;
 import com.rally.up.go.model.Product;
 import com.rally.up.go.dto.ProductResponseDTO;
 import com.rally.up.go.model.ShopUser;
 import com.rally.up.go.repository.ProductRepository;
 import com.rally.up.go.repository.ShopUserRepository;
+import com.rally.up.go.service.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,8 +47,8 @@ public class ProductController {
     @Autowired
     private ProductMapper productMapper;
 
-    @Value("${upload.dir}")
-    private String filePath;
+    @Autowired
+    private FileStorageService fileStorageService;
 
 
     @Operation(
@@ -61,15 +64,16 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductResponseDTO> addProduct(@AuthenticationPrincipal UserDetails userDetails,
                                                          @RequestPart("product") ProductResponseDTO dto,
-                                                         @RequestPart(value = "image", required = false) MultipartFile image
-    ) throws IOException {
+                                                         @RequestPart(value = "image", required = true) MultipartFile image
+    ) {
 
         String imageUrl = null;
-        if (image != null && !image.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-            Path absoluteFilePath = Paths.get(filePath, fileName);
-            Files.copy(image.getInputStream(), absoluteFilePath, StandardCopyOption.REPLACE_EXISTING);
-            imageUrl = "/uploads/" + fileName;
+
+        try {
+            imageUrl = fileStorageService.storeFile(image);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
 
         log.info("Uploading new file to " + imageUrl);
@@ -116,32 +120,37 @@ public class ProductController {
     )
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> updateProduct(
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long id,
             @RequestPart("product") ProductResponseDTO dto,
             @RequestPart(value = "image", required = false) MultipartFile image
-    ) throws IOException {
+    ) {
 
-        return productRepository.findById(id)
-                .map(existing -> {
-                    existing.setName(dto.name());
-                    existing.setDescription(dto.description());
-                    existing.setPrice(dto.price());
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id.toString()));
 
-                    if (image != null && !image.isEmpty()) {
-                        try {
-                            String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-                            Path filePath = Paths.get("uploads", fileName);
-                            Files.copy(image.getInputStream(), filePath);
-                            existing.setImage("/uploads/" + fileName);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    productRepository.save(existing);
-                    return ResponseEntity.ok(productMapper.toDto(existing));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        if (!product.getShop().getEmail().equals(userDetails.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        product.setName(dto.name());
+        product.setDescription(dto.description());
+        product.setPrice(dto.price());
+        product.setActive(dto.active());
+
+        if (image != null && !image.isEmpty()) {
+            try {
+                product.setImage(fileStorageService.updateFile(product.getImage(), image));
+            } catch (IOException e) {
+                log.error(e.getMessage());
+                return ResponseEntity.internalServerError().build();
+            }
+        }
+
+        productRepository.save(product);
+
+        return ResponseEntity.ok(productMapper.toDto(product));
     }
+
 
     @Operation(
             summary = "Delete a product",
@@ -153,12 +162,23 @@ public class ProductController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
         if (!productRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        //TODO create some handler for deleting files, best to make service for handling files
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id.toString()));
+
+        if (!product.getShop().getEmail().equals(userDetails.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        try {
+            fileStorageService.deleteFile(product.getImage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
 
         productRepository.deleteById(id);
 

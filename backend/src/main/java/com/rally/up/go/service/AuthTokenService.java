@@ -6,6 +6,7 @@ import com.rally.up.go.repository.UserRepository;
 import com.rally.up.go.repository.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,9 @@ public class AuthTokenService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Value("${app.baseUrl}")
     private String baseUrl;
@@ -79,7 +83,7 @@ public class AuthTokenService {
         }
 
         User user = passwordResetToken.get().getUser();
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         verificationTokenRepository.delete(passwordResetToken.get());
     }

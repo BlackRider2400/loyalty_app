@@ -90,6 +90,32 @@ public class ClientUserController {
 
             try {
                 ClientUserDTO clientUserDTO = clientUserMapper.toDto(clientUser);
+
+                if (clientUserDTO.currentShopUserDTO() != null && clientUserDTO.currentShopUserDTO().products() != null
+                        && !clientUserDTO.currentShopUserDTO().products().isEmpty()) {
+                    // Filter out inactive products
+                    List<ProductResponseDTO> activeProducts = clientUserDTO.currentShopUserDTO().products().stream()
+                            .filter(ProductResponseDTO::active)
+                            .toList();
+
+                    // Create a new ShopUserDTO with only active products
+                    ShopUserDTO updatedShopUser = new ShopUserDTO(
+                            clientUserDTO.currentShopUserDTO().id(),
+                            clientUserDTO.currentShopUserDTO().name(),
+                            activeProducts
+                    );
+
+                    // Create a new ClientUserDTO with the updated shop user
+                    clientUserDTO = new ClientUserDTO(
+                            clientUserDTO.id(),
+                            clientUserDTO.username(),
+                            clientUserDTO.email(),
+                            clientUserDTO.qrCode(),
+                            clientUserDTO.balance(),
+                            updatedShopUser,
+                            clientUserDTO.couponDTOList()
+                    );
+                }
                 return ResponseEntity.ok(clientUserDTO);
             } catch (ShopNotSelectedException e) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
@@ -153,7 +179,8 @@ public class ClientUserController {
                 .orElseThrow(() -> new UsernameNotFoundException("ShopUser " + userDetails.getUsername() + " not found."));
 
         try {
-            List<Product> productList = clientUser.getCurrentShop().getProducts();
+            List<Product> productList = clientUser.getCurrentShop().getProducts()
+                    .stream().filter(product -> product.getActive()).toList();
             return ResponseEntity.ok(productList.stream()
                     .map(product -> productMapper.toDto(product)).toList());
         } catch (ShopNotSelectedException e) {
@@ -180,6 +207,10 @@ public class ClientUserController {
         ClientUser clientUser = clientUserRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User with " + userDetails.getUsername() + "not found."));
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId.toString()));
+
+        if (!product.getActive()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
 
         Optional<Coupon> notUsedCoupon =
                 couponRepository.findFirstByClientUser_IdAndProduct_IdAndUsed(clientUser.getId(), productId, false);
